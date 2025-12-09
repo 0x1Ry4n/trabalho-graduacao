@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r \"audit\\\\|Audit\" /d/Dev/trabalho-graduacao/backend/src --include=*.ts)",
+      "Bash(grep -r swagger /d/Dev/trabalho-graduacao/backend/src --include=*.ts)",
+      "Bash(npm list:*)",
+      "Bash(grep -l \"swagger\" /d/Dev/trabalho-graduacao/backend/src/modules/*/*.route.ts)",
+      "Bash(ls d:/Dev/trabalho-graduacao/mobile/app/\\\\\\(admin\\\\\\)/)",
+      "Bash(ls d:/Dev/trabalho-graduacao/mobile/app/\\\\\\(student\\\\\\)/)",
+      "Bash(ls d:/Dev/trabalho-graduacao/mobile/app/\\\\\\(driver\\\\\\)/)",
+      "Bash(ls d:/Dev/trabalho-graduacao/mobile/app/\\\\\\(auth\\\\\\)/)",
+      "Bash(ls d:/Dev/trabalho-graduacao/mobile/app/\\\\\\(admin\\\\\\)/students/)",
+      "Bash(ls d:/Dev/trabalho-graduacao/mobile/app/\\\\\\(admin\\\\\\)/routes/)",
+      "Bash(ls d:/Dev/trabalho-graduacao/mobile/app/\\\\\\(admin\\\\\\)/payments/)",
+      "Bash(ls d:/Dev/trabalho-graduacao/mobile/app/\\\\\\(admin\\\\\\)/drivers/)",
+      "Bash(ls d:/Dev/trabalho-graduacao/mobile/app/\\\\\\(admin\\\\\\)/vehicles/)",
+      "Bash(npx ts-node:*)"
+    ]
+  }
+}

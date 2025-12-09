@@ -1,0 +1,1 @@
+ALTER TABLE "enrollments" ALTER COLUMN "collegeEnrollmentUrl" DROP NOT NULL;

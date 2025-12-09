@@ -1,0 +1,56 @@
+services:
+  # api:
+  #   container_name: tcc-api
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.dev
+  #   command: npm run dev
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - db
+  #     - redis
+  #   environment:
+  #     NODE_ENV: dev
+  #     DATABASE_URL: postgres://tcc:root@db:5432/tcc
+  #     REDIS_URL: redis://redis:6379
+
+    db:
+      container_name: tcc-database
+      image: postgres:17-alpine
+      ports:
+        - "${DB_PORT:-5432}:5432"
+      environment:
+        POSTGRES_USER: tcc
+        POSTGRES_PASSWORD: root
+        POSTGRES_DB: tcc
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+
+    redis:
+      container_name: tcc-redis
+      image: redis:7-alpine
+      ports:
+        - "${REDIS_PORT:-6379}:6379"
+      command: redis-server --appendonly yes
+      volumes:
+        - redis_data:/data
+
+    bullboard:
+      container_name: tcc-bullboard
+      image: deadly0/bull-board
+      ports:
+        - "${BULLBOARD_PORT:-3001}:3000"
+      environment:
+        REDIS_HOST: redis
+        REDIS_PORT: "${REDIS_PORT:-6379}:6379"
+      depends_on:
+        - redis
+
+volumes:
+  postgres_data:
+  redis_data:
+

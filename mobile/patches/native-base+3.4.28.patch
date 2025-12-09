@@ -1,0 +1,1082 @@
+diff --git a/node_modules/native-base/lib/commonjs/theme/components/actionsheet.js b/node_modules/native-base/lib/commonjs/theme/components/actionsheet.js
+index 77fef14..039a638 100644
+--- a/node_modules/native-base/lib/commonjs/theme/components/actionsheet.js
++++ b/node_modules/native-base/lib/commonjs/theme/components/actionsheet.js
+@@ -79,7 +79,7 @@ const ActionsheetItem = {
+     },
+     _focusVisible: {
+       _web: {
+-        outlineWidth: '0',
++        // outlineWidth: patched
+         style: {
+           boxShadow: "none"
+         },
+@@ -103,7 +103,7 @@ const ActionsheetItem = {
+       },
+       _focusVisible: {
+         _web: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           style: {
+             boxShadow: "none"
+           },
+diff --git a/node_modules/native-base/lib/commonjs/theme/components/alert-dialog.js b/node_modules/native-base/lib/commonjs/theme/components/alert-dialog.js
+index f3b1dc6..03646a2 100644
+--- a/node_modules/native-base/lib/commonjs/theme/components/alert-dialog.js
++++ b/node_modules/native-base/lib/commonjs/theme/components/alert-dialog.js
+@@ -106,7 +106,7 @@ const AlertDialogCloseButton = {
+       bg: 'transparent',
+       borderRadius: 'sm',
+       _web: {
+-        outlineWidth: 0,
++        // outlineWidth: patched
+         cursor: 'pointer'
+       },
+       _icon: {
+diff --git a/node_modules/native-base/lib/commonjs/theme/components/button.js b/node_modules/native-base/lib/commonjs/theme/components/button.js
+index e4791eb..51c8187 100644
+--- a/node_modules/native-base/lib/commonjs/theme/components/button.js
++++ b/node_modules/native-base/lib/commonjs/theme/components/button.js
+@@ -27,7 +27,7 @@ const baseStyle = props => {
+     },
+     _focusVisible: {
+       _web: {
+-        outlineWidth: '0',
++        // outlineWidth: patched
+         style: {
+           boxShadow: "".concat(primary[400], " 0px 0px 0px 2px")
+         }
+@@ -36,7 +36,7 @@ const baseStyle = props => {
+     _dark: {
+       _focusVisible: {
+         _web: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           style: {
+             boxShadow: "".concat(primary[500], " 0px 0px 0px 2px")
+           }
+diff --git a/node_modules/native-base/lib/commonjs/theme/components/checkbox.js b/node_modules/native-base/lib/commonjs/theme/components/checkbox.js
+index c7e0a14..9265136 100644
+--- a/node_modules/native-base/lib/commonjs/theme/components/checkbox.js
++++ b/node_modules/native-base/lib/commonjs/theme/components/checkbox.js
+@@ -106,9 +106,9 @@ const baseStyle = props => {
+     _focusVisible: {
+       _web: {
+         style: {
+-          outlineWidth: '2px',
+-          outlineColor: colors[c][400],
+-          outlineStyle: 'solid'
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         }
+       }
+     },
+diff --git a/node_modules/native-base/lib/commonjs/theme/components/icon-button.js b/node_modules/native-base/lib/commonjs/theme/components/icon-button.js
+index 8ab3b79..fca122c 100644
+--- a/node_modules/native-base/lib/commonjs/theme/components/icon-button.js
++++ b/node_modules/native-base/lib/commonjs/theme/components/icon-button.js
+@@ -32,9 +32,9 @@ const baseStyle = props => {
+     _focusVisible: {
+       _web: {
+         style: {
+-          outlineWidth: '2px',
+-          outlineColor: "".concat(colors[colorScheme][600]),
+-          outlineStyle: 'solid'
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         }
+       }
+     },
+@@ -48,9 +48,9 @@ const baseStyle = props => {
+       _focusVisible: {
+         _web: {
+           style: {
+-            outlineWidth: '2px',
+-            outlineColor: "".concat(colors[colorScheme][500]),
+-            outlineStyle: 'solid'
++            // outlineWidth: patched
++            // outlineColor: patched
++            // outlineStyle: patched
+           }
+         }
+       }
+diff --git a/node_modules/native-base/lib/commonjs/theme/components/input.js b/node_modules/native-base/lib/commonjs/theme/components/input.js
+index 5c67b0a..7402213 100644
+--- a/node_modules/native-base/lib/commonjs/theme/components/input.js
++++ b/node_modules/native-base/lib/commonjs/theme/components/input.js
+@@ -26,7 +26,7 @@ const baseStyle = props => {
+       }
+     },
+     _web: {
+-      outlineWidth: '0',
++      // outlineWidth: patched
+       overflow: 'auto',
+       lineHeight: 'lg',
+       // Todo: Move to _web inside size so that sm and xs don't have this much height
+@@ -60,7 +60,7 @@ const baseStyle = props => {
+       },
+       _stack: {
+         style: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           boxShadow: "0 0 0 1px ".concat(error[600])
+         }
+       }
+@@ -77,7 +77,7 @@ const baseStyle = props => {
+         },
+         _stack: {
+           style: {
+-            outlineWidth: '0',
++            // outlineWidth: patched
+             boxShadow: "0 0 0 1px ".concat(error[600])
+           }
+         }
+@@ -96,7 +96,7 @@ const baseStyle = props => {
+       },
+       _stack: {
+         style: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           boxShadow: "0 0 0 1px ".concat(primary[600])
+         }
+       }
+@@ -115,7 +115,7 @@ const baseStyle = props => {
+         },
+         _stack: {
+           style: {
+-            outlineWidth: '0',
++            // outlineWidth: patched
+             boxShadow: "0 0 0 1px ".concat(primary[500])
+           }
+         }
+@@ -124,7 +124,7 @@ const baseStyle = props => {
+         borderColor: 'error.500',
+         _stack: {
+           style: {
+-            outlineWidth: '0',
++            // outlineWidth: patched
+             boxShadow: "0 0 0 1px ".concat(error[500])
+           }
+         },
+@@ -212,14 +212,14 @@ function unstyledStyle() {
+     _invalid: {
+       _stack: {
+         style: {
+-          outlineWidth: 0
++          // outlineWidth: patched
+         }
+       }
+     },
+     _stack: {
+       _focus: {
+         style: {
+-          outlineWidth: '0'
++          // outlineWidth: patched
+         }
+       }
+     }
+@@ -238,7 +238,7 @@ function underlinedStyle(props) {
+     _focus: {
+       _stack: {
+         style: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           boxShadow: "0 1px 0 0 ".concat(primary[600])
+         }
+       }
+@@ -246,7 +246,7 @@ function underlinedStyle(props) {
+     _invalid: {
+       _stack: {
+         style: {
+-          outlineWidth: 0,
++          // outlineWidth: patched
+           boxShadow: "0 1px 0 0 ".concat(error[600])
+         }
+       }
+@@ -255,7 +255,7 @@ function underlinedStyle(props) {
+       _focus: {
+         _stack: {
+           style: {
+-            outlineWidth: '0',
++            // outlineWidth: patched
+             boxShadow: "0 1px 0 0 ".concat(primary[500])
+           }
+         }
+@@ -263,7 +263,7 @@ function underlinedStyle(props) {
+       _invalid: {
+         _stack: {
+           style: {
+-            outlineWidth: 0,
++            // outlineWidth: patched
+             boxShadow: "0 1px 0 0 ".concat(error[500])
+           }
+         }
+diff --git a/node_modules/native-base/lib/commonjs/theme/components/menu.js b/node_modules/native-base/lib/commonjs/theme/components/menu.js
+index 0ed4e89..61734b7 100644
+--- a/node_modules/native-base/lib/commonjs/theme/components/menu.js
++++ b/node_modules/native-base/lib/commonjs/theme/components/menu.js
+@@ -64,7 +64,7 @@ const MenuItem = {
+     px: 3,
+     py: 2,
+     _web: {
+-      outlineWidth: 0
++      // outlineWidth: patched
+     },
+     _stack: {
+       alignItems: 'center',
+@@ -95,7 +95,7 @@ const MenuItem = {
+     },
+     _focusVisible: {
+       _web: {
+-        outlineWidth: '0',
++        // outlineWidth: patched
+         style: {
+           boxShadow: "none"
+         },
+@@ -125,7 +125,7 @@ const MenuItem = {
+       },
+       _focusVisible: {
+         _web: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           style: {
+             boxShadow: "none"
+           },
+diff --git a/node_modules/native-base/lib/commonjs/theme/components/modal.js b/node_modules/native-base/lib/commonjs/theme/components/modal.js
+index 5c3d75c..f72af93 100644
+--- a/node_modules/native-base/lib/commonjs/theme/components/modal.js
++++ b/node_modules/native-base/lib/commonjs/theme/components/modal.js
+@@ -106,7 +106,7 @@ const ModalCloseButton = {
+       bg: 'transparent',
+       borderRadius: 'sm',
+       _web: {
+-        outlineWidth: 0,
++        // outlineWidth: patched
+         cursor: 'pointer'
+       },
+       _icon: {
+diff --git a/node_modules/native-base/lib/commonjs/theme/components/popover.js b/node_modules/native-base/lib/commonjs/theme/components/popover.js
+index bc22323..e83550e 100644
+--- a/node_modules/native-base/lib/commonjs/theme/components/popover.js
++++ b/node_modules/native-base/lib/commonjs/theme/components/popover.js
+@@ -22,7 +22,7 @@ const PopoverCloseButton = {
+     bg: 'transparent',
+     borderRadius: 'sm',
+     _web: {
+-      outlineWidth: 0,
++      // outlineWidth: patched
+       cursor: 'pointer'
+     },
+     _icon: {
+diff --git a/node_modules/native-base/lib/commonjs/theme/components/pressable.js b/node_modules/native-base/lib/commonjs/theme/components/pressable.js
+index 4d145e2..b64b281 100644
+--- a/node_modules/native-base/lib/commonjs/theme/components/pressable.js
++++ b/node_modules/native-base/lib/commonjs/theme/components/pressable.js
+@@ -13,7 +13,7 @@ const baseStyle = props => {
+     _focusVisible: {
+       _web: {
+         style: {
+-          outlineWidth: 0,
++          // outlineWidth: patched
+           boxShadow: "".concat(primary[400], " 0px 0px 0px 2px")
+         }
+       }
+@@ -22,7 +22,7 @@ const baseStyle = props => {
+       _focusVisible: {
+         _web: {
+           style: {
+-            outlineWidth: 0,
++            // outlineWidth: patched
+             boxShadow: "".concat(primary[500], " 0px 0px 0px 2px")
+           }
+         }
+diff --git a/node_modules/native-base/lib/commonjs/theme/components/radio.js b/node_modules/native-base/lib/commonjs/theme/components/radio.js
+index 9d7b12f..fcd97c5 100644
+--- a/node_modules/native-base/lib/commonjs/theme/components/radio.js
++++ b/node_modules/native-base/lib/commonjs/theme/components/radio.js
+@@ -121,9 +121,9 @@ const baseStyle = props => {
+     _focusVisible: {
+       _web: {
+         style: {
+-          outlineWidth: '2px',
+-          outlineColor: colors[c][400],
+-          outlineStyle: 'solid'
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         }
+       }
+     }
+diff --git a/node_modules/native-base/lib/commonjs/theme/components/slider.js b/node_modules/native-base/lib/commonjs/theme/components/slider.js
+index c60ff06..0af8be8 100644
+--- a/node_modules/native-base/lib/commonjs/theme/components/slider.js
++++ b/node_modules/native-base/lib/commonjs/theme/components/slider.js
+@@ -60,16 +60,16 @@ const SliderThumb = {
+       bg: "".concat(colorScheme, ".600"),
+       _hover: {
+         _web: {
+-          outlineWidth: '4px',
+-          outlineColor: primary[300],
+-          outlineStyle: 'solid'
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         }
+       },
+       _focus: {
+         _web: {
+-          outlineWidth: '2px',
+-          outlineColor: primary[400],
+-          outlineStyle: 'solid'
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         }
+       },
+       _pressed: {
+@@ -82,16 +82,16 @@ const SliderThumb = {
+         bg: "".concat(colorScheme, ".500"),
+         _hover: {
+           _web: {
+-            outlineWidth: '4px',
+-            outlineColor: primary[800],
+-            outlineStyle: 'solid'
++            // outlineWidth: patched
++            // outlineColor: patched
++            // outlineStyle: patched
+           }
+         },
+         _focus: {
+           _web: {
+-            outlineWidth: '2px',
+-            outlineColor: primary[400],
+-            outlineStyle: 'solid'
++            // outlineWidth: patched
++            // outlineColor: patched
++            // outlineStyle: patched
+           }
+         },
+         _pressed: {
+diff --git a/node_modules/native-base/lib/module/theme/components/actionsheet.js b/node_modules/native-base/lib/module/theme/components/actionsheet.js
+index 73115a0..0179e84 100644
+--- a/node_modules/native-base/lib/module/theme/components/actionsheet.js
++++ b/node_modules/native-base/lib/module/theme/components/actionsheet.js
+@@ -71,7 +71,7 @@ export const ActionsheetItem = {
+     },
+     _focusVisible: {
+       _web: {
+-        outlineWidth: '0',
++        // outlineWidth: patched
+         style: {
+           boxShadow: "none"
+         },
+@@ -95,7 +95,7 @@ export const ActionsheetItem = {
+       },
+       _focusVisible: {
+         _web: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           style: {
+             boxShadow: "none"
+           },
+diff --git a/node_modules/native-base/lib/module/theme/components/alert-dialog.js b/node_modules/native-base/lib/module/theme/components/alert-dialog.js
+index bade4e1..cb48103 100644
+--- a/node_modules/native-base/lib/module/theme/components/alert-dialog.js
++++ b/node_modules/native-base/lib/module/theme/components/alert-dialog.js
+@@ -96,7 +96,7 @@ export const AlertDialogCloseButton = {
+       bg: 'transparent',
+       borderRadius: 'sm',
+       _web: {
+-        outlineWidth: 0,
++        // outlineWidth: patched
+         cursor: 'pointer'
+       },
+       _icon: {
+diff --git a/node_modules/native-base/lib/module/theme/components/button.js b/node_modules/native-base/lib/module/theme/components/button.js
+index 6356940..54720da 100644
+--- a/node_modules/native-base/lib/module/theme/components/button.js
++++ b/node_modules/native-base/lib/module/theme/components/button.js
+@@ -20,7 +20,7 @@ const baseStyle = props => {
+     },
+     _focusVisible: {
+       _web: {
+-        outlineWidth: '0',
++        // outlineWidth: patched
+         style: {
+           boxShadow: "".concat(primary[400], " 0px 0px 0px 2px")
+         }
+@@ -29,7 +29,7 @@ const baseStyle = props => {
+     _dark: {
+       _focusVisible: {
+         _web: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           style: {
+             boxShadow: "".concat(primary[500], " 0px 0px 0px 2px")
+           }
+diff --git a/node_modules/native-base/lib/module/theme/components/checkbox.js b/node_modules/native-base/lib/module/theme/components/checkbox.js
+index c7b97c9..820464d 100644
+--- a/node_modules/native-base/lib/module/theme/components/checkbox.js
++++ b/node_modules/native-base/lib/module/theme/components/checkbox.js
+@@ -99,9 +99,9 @@ const baseStyle = props => {
+     _focusVisible: {
+       _web: {
+         style: {
+-          outlineWidth: '2px',
+-          outlineColor: colors[c][400],
+-          outlineStyle: 'solid'
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         }
+       }
+     },
+diff --git a/node_modules/native-base/lib/module/theme/components/icon-button.js b/node_modules/native-base/lib/module/theme/components/icon-button.js
+index 1e5f617..fddef5c 100644
+--- a/node_modules/native-base/lib/module/theme/components/icon-button.js
++++ b/node_modules/native-base/lib/module/theme/components/icon-button.js
+@@ -25,9 +25,9 @@ const baseStyle = props => {
+     _focusVisible: {
+       _web: {
+         style: {
+-          outlineWidth: '2px',
+-          outlineColor: "".concat(colors[colorScheme][600]),
+-          outlineStyle: 'solid'
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         }
+       }
+     },
+@@ -41,9 +41,9 @@ const baseStyle = props => {
+       _focusVisible: {
+         _web: {
+           style: {
+-            outlineWidth: '2px',
+-            outlineColor: "".concat(colors[colorScheme][500]),
+-            outlineStyle: 'solid'
++            // outlineWidth: patched
++            // outlineColor: patched
++            // outlineStyle: patched
+           }
+         }
+       }
+diff --git a/node_modules/native-base/lib/module/theme/components/input.js b/node_modules/native-base/lib/module/theme/components/input.js
+index 4ac101a..bcd96c1 100644
+--- a/node_modules/native-base/lib/module/theme/components/input.js
++++ b/node_modules/native-base/lib/module/theme/components/input.js
+@@ -19,7 +19,7 @@ const baseStyle = props => {
+       }
+     },
+     _web: {
+-      outlineWidth: '0',
++      // outlineWidth: patched
+       overflow: 'auto',
+       lineHeight: 'lg',
+       // Todo: Move to _web inside size so that sm and xs don't have this much height
+@@ -53,7 +53,7 @@ const baseStyle = props => {
+       },
+       _stack: {
+         style: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           boxShadow: "0 0 0 1px ".concat(error[600])
+         }
+       }
+@@ -70,7 +70,7 @@ const baseStyle = props => {
+         },
+         _stack: {
+           style: {
+-            outlineWidth: '0',
++            // outlineWidth: patched
+             boxShadow: "0 0 0 1px ".concat(error[600])
+           }
+         }
+@@ -89,7 +89,7 @@ const baseStyle = props => {
+       },
+       _stack: {
+         style: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           boxShadow: "0 0 0 1px ".concat(primary[600])
+         }
+       }
+@@ -108,7 +108,7 @@ const baseStyle = props => {
+         },
+         _stack: {
+           style: {
+-            outlineWidth: '0',
++            // outlineWidth: patched
+             boxShadow: "0 0 0 1px ".concat(primary[500])
+           }
+         }
+@@ -117,7 +117,7 @@ const baseStyle = props => {
+         borderColor: 'error.500',
+         _stack: {
+           style: {
+-            outlineWidth: '0',
++            // outlineWidth: patched
+             boxShadow: "0 0 0 1px ".concat(error[500])
+           }
+         },
+@@ -205,14 +205,14 @@ function unstyledStyle() {
+     _invalid: {
+       _stack: {
+         style: {
+-          outlineWidth: 0
++          // outlineWidth: patched
+         }
+       }
+     },
+     _stack: {
+       _focus: {
+         style: {
+-          outlineWidth: '0'
++          // outlineWidth: patched
+         }
+       }
+     }
+@@ -231,7 +231,7 @@ function underlinedStyle(props) {
+     _focus: {
+       _stack: {
+         style: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           boxShadow: "0 1px 0 0 ".concat(primary[600])
+         }
+       }
+@@ -239,7 +239,7 @@ function underlinedStyle(props) {
+     _invalid: {
+       _stack: {
+         style: {
+-          outlineWidth: 0,
++          // outlineWidth: patched
+           boxShadow: "0 1px 0 0 ".concat(error[600])
+         }
+       }
+@@ -248,7 +248,7 @@ function underlinedStyle(props) {
+       _focus: {
+         _stack: {
+           style: {
+-            outlineWidth: '0',
++            // outlineWidth: patched
+             boxShadow: "0 1px 0 0 ".concat(primary[500])
+           }
+         }
+@@ -256,7 +256,7 @@ function underlinedStyle(props) {
+       _invalid: {
+         _stack: {
+           style: {
+-            outlineWidth: 0,
++            // outlineWidth: patched
+             boxShadow: "0 1px 0 0 ".concat(error[500])
+           }
+         }
+diff --git a/node_modules/native-base/lib/module/theme/components/menu.js b/node_modules/native-base/lib/module/theme/components/menu.js
+index 3f51171..b65a2e8 100644
+--- a/node_modules/native-base/lib/module/theme/components/menu.js
++++ b/node_modules/native-base/lib/module/theme/components/menu.js
+@@ -54,7 +54,7 @@ export const MenuItem = {
+     px: 3,
+     py: 2,
+     _web: {
+-      outlineWidth: 0
++      // outlineWidth: patched
+     },
+     _stack: {
+       alignItems: 'center',
+@@ -85,7 +85,7 @@ export const MenuItem = {
+     },
+     _focusVisible: {
+       _web: {
+-        outlineWidth: '0',
++        // outlineWidth: patched
+         style: {
+           boxShadow: "none"
+         },
+@@ -115,7 +115,7 @@ export const MenuItem = {
+       },
+       _focusVisible: {
+         _web: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           style: {
+             boxShadow: "none"
+           },
+diff --git a/node_modules/native-base/lib/module/theme/components/modal.js b/node_modules/native-base/lib/module/theme/components/modal.js
+index fb3b8dc..3092fe2 100644
+--- a/node_modules/native-base/lib/module/theme/components/modal.js
++++ b/node_modules/native-base/lib/module/theme/components/modal.js
+@@ -96,7 +96,7 @@ export const ModalCloseButton = {
+       bg: 'transparent',
+       borderRadius: 'sm',
+       _web: {
+-        outlineWidth: 0,
++        // outlineWidth: patched
+         cursor: 'pointer'
+       },
+       _icon: {
+diff --git a/node_modules/native-base/lib/module/theme/components/popover.js b/node_modules/native-base/lib/module/theme/components/popover.js
+index a07679f..8a4e01c 100644
+--- a/node_modules/native-base/lib/module/theme/components/popover.js
++++ b/node_modules/native-base/lib/module/theme/components/popover.js
+@@ -15,7 +15,7 @@ export const PopoverCloseButton = {
+     bg: 'transparent',
+     borderRadius: 'sm',
+     _web: {
+-      outlineWidth: 0,
++      // outlineWidth: patched
+       cursor: 'pointer'
+     },
+     _icon: {
+diff --git a/node_modules/native-base/lib/module/theme/components/pressable.js b/node_modules/native-base/lib/module/theme/components/pressable.js
+index 925fd3e..865d4eb 100644
+--- a/node_modules/native-base/lib/module/theme/components/pressable.js
++++ b/node_modules/native-base/lib/module/theme/components/pressable.js
+@@ -6,7 +6,7 @@ const baseStyle = props => {
+     _focusVisible: {
+       _web: {
+         style: {
+-          outlineWidth: 0,
++          // outlineWidth: patched
+           boxShadow: "".concat(primary[400], " 0px 0px 0px 2px")
+         }
+       }
+@@ -15,7 +15,7 @@ const baseStyle = props => {
+       _focusVisible: {
+         _web: {
+           style: {
+-            outlineWidth: 0,
++            // outlineWidth: patched
+             boxShadow: "".concat(primary[500], " 0px 0px 0px 2px")
+           }
+         }
+diff --git a/node_modules/native-base/lib/module/theme/components/radio.js b/node_modules/native-base/lib/module/theme/components/radio.js
+index 36ad8bb..5924ba8 100644
+--- a/node_modules/native-base/lib/module/theme/components/radio.js
++++ b/node_modules/native-base/lib/module/theme/components/radio.js
+@@ -114,9 +114,9 @@ const baseStyle = props => {
+     _focusVisible: {
+       _web: {
+         style: {
+-          outlineWidth: '2px',
+-          outlineColor: colors[c][400],
+-          outlineStyle: 'solid'
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         }
+       }
+     }
+diff --git a/node_modules/native-base/lib/module/theme/components/slider.js b/node_modules/native-base/lib/module/theme/components/slider.js
+index f1478ec..485726d 100644
+--- a/node_modules/native-base/lib/module/theme/components/slider.js
++++ b/node_modules/native-base/lib/module/theme/components/slider.js
+@@ -53,16 +53,16 @@ export const SliderThumb = {
+       bg: "".concat(colorScheme, ".600"),
+       _hover: {
+         _web: {
+-          outlineWidth: '4px',
+-          outlineColor: primary[300],
+-          outlineStyle: 'solid'
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         }
+       },
+       _focus: {
+         _web: {
+-          outlineWidth: '2px',
+-          outlineColor: primary[400],
+-          outlineStyle: 'solid'
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         }
+       },
+       _pressed: {
+@@ -75,16 +75,16 @@ export const SliderThumb = {
+         bg: "".concat(colorScheme, ".500"),
+         _hover: {
+           _web: {
+-            outlineWidth: '4px',
+-            outlineColor: primary[800],
+-            outlineStyle: 'solid'
++            // outlineWidth: patched
++            // outlineColor: patched
++            // outlineStyle: patched
+           }
+         },
+         _focus: {
+           _web: {
+-            outlineWidth: '2px',
+-            outlineColor: primary[400],
+-            outlineStyle: 'solid'
++            // outlineWidth: patched
++            // outlineColor: patched
++            // outlineStyle: patched
+           }
+         },
+         _pressed: {
+diff --git a/node_modules/native-base/src/theme/components/actionsheet.ts b/node_modules/native-base/src/theme/components/actionsheet.ts
+index 90f9686..68f9806 100644
+--- a/node_modules/native-base/src/theme/components/actionsheet.ts
++++ b/node_modules/native-base/src/theme/components/actionsheet.ts
+@@ -77,7 +77,7 @@ export const ActionsheetItem = {
+     },
+     _focusVisible: {
+       _web: {
+-        outlineWidth: '0',
++        // outlineWidth: patched
+         style: { boxShadow: `none` },
+         bg: 'muted.300',
+       },
+@@ -100,7 +100,7 @@ export const ActionsheetItem = {
+       },
+       _focusVisible: {
+         _web: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           style: { boxShadow: `none` },
+           bg: 'muted.600',
+         },
+diff --git a/node_modules/native-base/src/theme/components/alert-dialog.ts b/node_modules/native-base/src/theme/components/alert-dialog.ts
+index 6517c29..1f9463d 100644
+--- a/node_modules/native-base/src/theme/components/alert-dialog.ts
++++ b/node_modules/native-base/src/theme/components/alert-dialog.ts
+@@ -89,7 +89,7 @@ export const AlertDialogCloseButton = {
+       bg: 'transparent',
+       borderRadius: 'sm',
+       _web: {
+-        outlineWidth: 0,
++        // outlineWidth: patched
+         cursor: 'pointer',
+       },
+       _icon: {
+diff --git a/node_modules/native-base/src/theme/components/button.ts b/node_modules/native-base/src/theme/components/button.ts
+index 3a0695a..762af49 100644
+--- a/node_modules/native-base/src/theme/components/button.ts
++++ b/node_modules/native-base/src/theme/components/button.ts
+@@ -20,14 +20,14 @@ const baseStyle = (props: InterfaceButtonProps & { theme: any }) => {
+     },
+     _focusVisible: {
+       _web: {
+-        outlineWidth: '0',
++        // outlineWidth: patched
+         style: { boxShadow: `${primary[400]} 0px 0px 0px 2px` },
+       },
+     },
+     _dark: {
+       _focusVisible: {
+         _web: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           style: { boxShadow: `${primary[500]} 0px 0px 0px 2px` },
+         },
+       },
+diff --git a/node_modules/native-base/src/theme/components/checkbox.ts b/node_modules/native-base/src/theme/components/checkbox.ts
+index aef8f10..d7e5352 100644
+--- a/node_modules/native-base/src/theme/components/checkbox.ts
++++ b/node_modules/native-base/src/theme/components/checkbox.ts
+@@ -98,9 +98,9 @@ const baseStyle = (props: Record<string, any>) => {
+     _focusVisible: {
+       _web: {
+         style: {
+-          outlineWidth: '2px',
+-          outlineColor: colors[c][400],
+-          outlineStyle: 'solid',
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         },
+       },
+     },
+diff --git a/node_modules/native-base/src/theme/components/icon-button.ts b/node_modules/native-base/src/theme/components/icon-button.ts
+index cfb7309..c17e2b1 100644
+--- a/node_modules/native-base/src/theme/components/icon-button.ts
++++ b/node_modules/native-base/src/theme/components/icon-button.ts
+@@ -23,9 +23,9 @@ const baseStyle = (props: any) => {
+     _focusVisible: {
+       _web: {
+         style: {
+-          outlineWidth: '2px',
+-          outlineColor: `${colors[colorScheme][600]}`,
+-          outlineStyle: 'solid',
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         },
+       },
+     },
+@@ -39,9 +39,9 @@ const baseStyle = (props: any) => {
+       _focusVisible: {
+         _web: {
+           style: {
+-            outlineWidth: '2px',
+-            outlineColor: `${colors[colorScheme][500]}`,
+-            outlineStyle: 'solid',
++            // outlineWidth: patched
++            // outlineColor: patched
++            // outlineStyle: patched
+           },
+         },
+       },
+diff --git a/node_modules/native-base/src/theme/components/input.ts b/node_modules/native-base/src/theme/components/input.ts
+index ed3047c..98dbb89 100644
+--- a/node_modules/native-base/src/theme/components/input.ts
++++ b/node_modules/native-base/src/theme/components/input.ts
+@@ -17,7 +17,7 @@ const baseStyle = (props: InterfaceInputProps & { theme: any }) => {
+       },
+     },
+     _web: {
+-      outlineWidth: '0',
++      // outlineWidth: patched
+       overflow: 'auto',
+       lineHeight: 'lg', // Todo: Move to _web inside size so that sm and xs don't have this much height
+       style: { outline: 'none' },
+@@ -47,7 +47,7 @@ const baseStyle = (props: InterfaceInputProps & { theme: any }) => {
+       _hover: { borderColor: 'error.600' },
+       _stack: {
+         style: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           boxShadow: `0 0 0 1px ${error[600]}`,
+         },
+       },
+@@ -60,7 +60,7 @@ const baseStyle = (props: InterfaceInputProps & { theme: any }) => {
+         _hover: { borderColor: 'error.600' },
+         _stack: {
+           style: {
+-            outlineWidth: '0',
++            // outlineWidth: patched
+             boxShadow: `0 0 0 1px ${error[600]}`,
+           },
+         },
+@@ -79,7 +79,7 @@ const baseStyle = (props: InterfaceInputProps & { theme: any }) => {
+       },
+       _stack: {
+         style: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           boxShadow: `0 0 0 1px ${primary[600]}`,
+         },
+       },
+@@ -96,7 +96,7 @@ const baseStyle = (props: InterfaceInputProps & { theme: any }) => {
+         _hover: { borderColor: 'primary.500' },
+         _stack: {
+           style: {
+-            outlineWidth: '0',
++            // outlineWidth: patched
+             boxShadow: `0 0 0 1px ${primary[500]}`,
+           },
+         },
+@@ -105,7 +105,7 @@ const baseStyle = (props: InterfaceInputProps & { theme: any }) => {
+         borderColor: 'error.500',
+         _stack: {
+           style: {
+-            outlineWidth: '0',
++            // outlineWidth: patched
+             boxShadow: `0 0 0 1px ${error[500]}`,
+           },
+         },
+@@ -183,14 +183,14 @@ function unstyledStyle() {
+     _invalid: {
+       _stack: {
+         style: {
+-          outlineWidth: 0,
++          // outlineWidth: patched
+         },
+       },
+     },
+     _stack: {
+       _focus: {
+         style: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+         },
+       },
+     },
+@@ -206,7 +206,7 @@ function underlinedStyle(props: InterfaceInputProps & { theme: any }) {
+     _focus: {
+       _stack: {
+         style: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           boxShadow: `0 1px 0 0 ${primary[600]}`,
+         },
+       },
+@@ -214,7 +214,7 @@ function underlinedStyle(props: InterfaceInputProps & { theme: any }) {
+     _invalid: {
+       _stack: {
+         style: {
+-          outlineWidth: 0,
++          // outlineWidth: patched
+           boxShadow: `0 1px 0 0 ${error[600]}`,
+         },
+       },
+@@ -224,7 +224,7 @@ function underlinedStyle(props: InterfaceInputProps & { theme: any }) {
+       _focus: {
+         _stack: {
+           style: {
+-            outlineWidth: '0',
++            // outlineWidth: patched
+             boxShadow: `0 1px 0 0 ${primary[500]}`,
+           },
+         },
+@@ -232,7 +232,7 @@ function underlinedStyle(props: InterfaceInputProps & { theme: any }) {
+       _invalid: {
+         _stack: {
+           style: {
+-            outlineWidth: 0,
++            // outlineWidth: patched
+             boxShadow: `0 1px 0 0 ${error[500]}`,
+           },
+         },
+diff --git a/node_modules/native-base/src/theme/components/menu.ts b/node_modules/native-base/src/theme/components/menu.ts
+index 84fced0..384c8e8 100644
+--- a/node_modules/native-base/src/theme/components/menu.ts
++++ b/node_modules/native-base/src/theme/components/menu.ts
+@@ -48,7 +48,7 @@ export const MenuItem = {
+     px: 3,
+     py: 2,
+     _web: {
+-      outlineWidth: 0,
++      // outlineWidth: patched
+     },
+     _stack: {
+       alignItems: 'center',
+@@ -79,7 +79,7 @@ export const MenuItem = {
+     },
+     _focusVisible: {
+       _web: {
+-        outlineWidth: '0',
++        // outlineWidth: patched
+         style: { boxShadow: `none` },
+         bg: 'muted.300',
+       },
+@@ -108,7 +108,7 @@ export const MenuItem = {
+       },
+       _focusVisible: {
+         _web: {
+-          outlineWidth: '0',
++          // outlineWidth: patched
+           style: { boxShadow: `none` },
+           bg: 'muted.600',
+         },
+diff --git a/node_modules/native-base/src/theme/components/modal.ts b/node_modules/native-base/src/theme/components/modal.ts
+index ea01132..df1a6c3 100644
+--- a/node_modules/native-base/src/theme/components/modal.ts
++++ b/node_modules/native-base/src/theme/components/modal.ts
+@@ -89,7 +89,7 @@ export const ModalCloseButton = {
+       bg: 'transparent',
+       borderRadius: 'sm',
+       _web: {
+-        outlineWidth: 0,
++        // outlineWidth: patched
+         cursor: 'pointer',
+       },
+       _icon: {
+diff --git a/node_modules/native-base/src/theme/components/popover.ts b/node_modules/native-base/src/theme/components/popover.ts
+index 13afb67..6cf964e 100644
+--- a/node_modules/native-base/src/theme/components/popover.ts
++++ b/node_modules/native-base/src/theme/components/popover.ts
+@@ -16,7 +16,7 @@ export const PopoverCloseButton = {
+     bg: 'transparent',
+     borderRadius: 'sm',
+     _web: {
+-      outlineWidth: 0,
++      // outlineWidth: patched
+       cursor: 'pointer',
+     },
+     _icon: {
+diff --git a/node_modules/native-base/src/theme/components/pressable.ts b/node_modules/native-base/src/theme/components/pressable.ts
+index 94a7419..ca34230 100644
+--- a/node_modules/native-base/src/theme/components/pressable.ts
++++ b/node_modules/native-base/src/theme/components/pressable.ts
+@@ -5,7 +5,7 @@ const baseStyle = (props: any) => {
+     _focusVisible: {
+       _web: {
+         style: {
+-          outlineWidth: 0,
++          // outlineWidth: patched
+           boxShadow: `${primary[400]} 0px 0px 0px 2px`,
+         },
+       },
+@@ -14,7 +14,7 @@ const baseStyle = (props: any) => {
+       _focusVisible: {
+         _web: {
+           style: {
+-            outlineWidth: 0,
++            // outlineWidth: patched
+             boxShadow: `${primary[500]} 0px 0px 0px 2px`,
+           },
+         },
+diff --git a/node_modules/native-base/src/theme/components/radio.ts b/node_modules/native-base/src/theme/components/radio.ts
+index 215548c..868c3ca 100644
+--- a/node_modules/native-base/src/theme/components/radio.ts
++++ b/node_modules/native-base/src/theme/components/radio.ts
+@@ -110,9 +110,9 @@ const baseStyle = (props: Record<string, any>) => {
+     _focusVisible: {
+       _web: {
+         style: {
+-          outlineWidth: '2px',
+-          outlineColor: colors[c][400],
+-          outlineStyle: 'solid',
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         },
+       },
+     },
+diff --git a/node_modules/native-base/src/theme/components/slider.ts b/node_modules/native-base/src/theme/components/slider.ts
+index 3c009b3..42a5c2d 100644
+--- a/node_modules/native-base/src/theme/components/slider.ts
++++ b/node_modules/native-base/src/theme/components/slider.ts
+@@ -47,16 +47,16 @@ export const SliderThumb = {
+       bg: `${colorScheme}.600`,
+       _hover: {
+         _web: {
+-          outlineWidth: '4px',
+-          outlineColor: primary[300],
+-          outlineStyle: 'solid',
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         },
+       },
+       _focus: {
+         _web: {
+-          outlineWidth: '2px',
+-          outlineColor: primary[400],
+-          outlineStyle: 'solid',
++          // outlineWidth: patched
++          // outlineColor: patched
++          // outlineStyle: patched
+         },
+       },
+       _pressed: {
+@@ -70,16 +70,16 @@ export const SliderThumb = {
+         bg: `${colorScheme}.500`,
+         _hover: {
+           _web: {
+-            outlineWidth: '4px',
+-            outlineColor: primary[800],
+-            outlineStyle: 'solid',
++            // outlineWidth: patched
++            // outlineColor: patched
++            // outlineStyle: patched
+           },
+         },
+         _focus: {
+           _web: {
+-            outlineWidth: '2px',
+-            outlineColor: primary[400],
+-            outlineStyle: 'solid',
++            // outlineWidth: patched
++            // outlineColor: patched
++            // outlineStyle: patched
+           },
+         },
+         _pressed: {

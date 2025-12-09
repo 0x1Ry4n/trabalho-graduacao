@@ -1,0 +1,121 @@
+@startuml
+title UniPass Mobilidade - Diagrama de Caso de Uso
+
+left to right direction
+scale max 2600 width
+
+skinparam linetype ortho
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam packageStyle rectangle
+
+skinparam nodesep 140
+skinparam ranksep 40
+
+skinparam defaultFontName Arial
+skinparam dpi 160
+
+actor "Administrador" as Admin
+actor "Aluno" as Student
+actor "Motorista" as Driver
+actor "Sistema\nautomatico" as System
+actor "Servico externo\nde pagamento" as PaymentService
+
+rectangle "UniPass Mobilidade" {
+
+  together {
+
+    package "Acesso" {
+
+      usecase "Autenticar usuario" as Login
+      usecase "Validar perfil" as Authorize
+      usecase "Visualizar perfil" as Profile
+      usecase "Encerrar sessao" as Logout
+
+      Login -[hidden]right- Authorize
+      Authorize -[hidden]right- Profile
+      Profile -[hidden]right- Logout
+    }
+
+    package "Administracao" {
+
+      usecase "Painel admin" as AdminPanel
+      usecase "Cadastros" as Registrations
+      usecase "Transporte" as Transport
+      usecase "Cobrancas" as Payments
+      usecase "Auditoria" as Audit
+
+      AdminPanel -[hidden]right- Registrations
+      Registrations -[hidden]right- Transport
+      Transport -[hidden]right- Payments
+      Payments -[hidden]right- Audit
+    }
+
+    package "Aluno" {
+
+      usecase "Area do aluno" as StudentArea
+      usecase "Passe digital" as DigitalPass
+      usecase "Pagamentos" as StudentPayments
+      usecase "Rotas e horarios" as StudentRoutes
+
+      StudentArea -[hidden]right- DigitalPass
+      DigitalPass -[hidden]right- StudentPayments
+      StudentPayments -[hidden]right- StudentRoutes
+    }
+
+    package "Motorista" {
+
+      usecase "Area motorista" as DriverArea
+      usecase "Validar QR Code" as ValidateQr
+      usecase "Sincronizar" as SyncValidations
+      usecase "Consultar rotas" as DriverConsults
+
+      DriverArea -[hidden]right- ValidateQr
+      ValidateQr -[hidden]right- SyncValidations
+      SyncValidations -[hidden]right- DriverConsults
+    }
+
+    package "Automatico" {
+
+      usecase "Gerar mensalidades" as MonthlyFees
+      usecase "Registrar logs" as Logs
+      usecase "Cache offline" as OfflineCache
+
+      MonthlyFees -[hidden]right- Logs
+      Logs -[hidden]right- OfflineCache
+    }
+  }
+}
+
+Admin --> Login
+Admin --> AdminPanel
+
+Student --> Login
+Student --> StudentArea
+
+Driver --> Login
+Driver --> DriverArea
+
+System --> MonthlyFees
+System --> Logs
+System --> SyncValidations
+
+PaymentService --> Payments
+
+Login .right.> Authorize : <<include>>
+
+AdminPanel .right.> Registrations : <<include>>
+AdminPanel .right.> Transport : <<include>>
+AdminPanel .right.> Payments : <<include>>
+AdminPanel .right.> Audit : <<include>>
+
+StudentArea .right.> DigitalPass : <<include>>
+StudentArea .right.> StudentPayments : <<include>>
+StudentArea .right.> StudentRoutes : <<include>>
+
+DriverArea .right.> ValidateQr : <<include>>
+DriverArea .right.> SyncValidations : <<include>>
+DriverArea .right.> DriverConsults : <<include>>
+
+@enduml

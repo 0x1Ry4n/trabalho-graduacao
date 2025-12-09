@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "UniPass Mobilidade",
+    "slug": "unipass-mobilidade",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/unipass-logo.png",
+    "scheme": "unipass",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/unipass-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1E40AF"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Permitir acesso à câmera para leitura de QR codes.",
+        "NSLocationWhenInUseUsageDescription": "Permitir acesso à localização para registrar validações."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/unipass-logo.png",
+        "backgroundColor": "#1E40AF"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/unipass-logo.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Permitir acesso à câmera para leitura de QR codes."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

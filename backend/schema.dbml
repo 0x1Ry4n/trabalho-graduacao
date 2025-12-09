@@ -1,0 +1,380 @@
+enum account_receivable_type {
+  ENROLLMENT_FEE
+  MONTHLY_FEE
+}
+
+enum account_status {
+  OPEN
+  PAID
+  CANCELED
+}
+
+enum audit_action {
+  CREATE
+  UPDATE
+  DELETE
+  ACTIVATE
+  INACTIVATE
+}
+
+enum card_validation_status {
+  VALID
+  INVALID
+}
+
+enum contract_type {
+  CLT
+  PJ
+  FREELANCER
+}
+
+enum enrollment_status {
+  ACTIVE
+  CANCELED
+  FINISHED
+}
+
+enum payer_type {
+  STUDENT
+  COMPANY
+}
+
+enum payment_proof_type {
+  FILE
+  OTHER
+}
+
+enum payment_type {
+  CASH
+  CREDIT_CARD
+  DEBIT_CARD
+  PIX
+  BANK_TRANSFER
+  ANY
+}
+
+enum route_period {
+  MORNING
+  AFTERNOON
+  NIGHT
+}
+
+enum trip_expense_status {
+  PENDING
+  APPROVED
+  REJECTED
+  PAID
+  CANCELED
+}
+
+enum trip_expense_type {
+  FUEL
+  MAINTENANCE
+  TOLL
+  PARKING
+  CLEANING
+  INSURANCE
+  LICENSE
+  REPAIR
+  PARTS
+  OTHER
+}
+
+enum user_role {
+  STUDENT
+  DRIVER
+  ADMIN
+}
+
+enum vehicle_type {
+  MICROBUS
+  BUS
+  VAN
+}
+
+table accounts_receivable {
+  id integer [pk, not null]
+  payerId integer [not null]
+  enrollmentId integer
+  description varchar(200)
+  amount "numeric(10, 2)" [not null]
+  dueDate date [not null]
+  accountReceivableType account_receivable_type [not null]
+  paymentType payment_type [not null, default: 'ANY']
+  status account_status [not null, default: 'OPEN']
+  paymentDate date
+  paymentProofUrl varchar(255)
+  paymentProofType payment_proof_type
+  active integer [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table audit_logs {
+  id integer [pk, not null]
+  userId integer
+  action audit_action [not null]
+  entityType varchar(100) [not null]
+  entityId integer [not null]
+  oldValues jsonb
+  newValues jsonb
+  ipAddress varchar(50)
+  userAgent varchar(500)
+  createdAt timestamp [not null, default: `now()`]
+}
+
+table card_validations {
+  id integer [pk, not null]
+  studentId integer [not null]
+  driverId integer [not null]
+  routeId integer [not null]
+  latitude "numeric(10, 7)"
+  longitude "numeric(10, 7)"
+  status card_validation_status [not null]
+  validationTime timestamp [not null, default: `now()`]
+}
+
+table colleges {
+  id integer [pk, not null]
+  name varchar(150) [not null]
+  city varchar(100) [not null]
+  neighborhood varchar(100) [not null]
+  address varchar(200) [not null]
+  cep varchar(15) [not null]
+  contactEmail varchar(255)
+  contactPhone varchar(50)
+  active integer [not null, default: 1]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table drivers {
+  id integer [pk, not null]
+  userId integer [not null, unique]
+  name varchar(150) [not null]
+  motherName varchar(150) [not null]
+  cpf varchar(15) [not null, unique]
+  cnpj varchar(18) [unique]
+  rg varchar(11) [not null, unique]
+  licenseNumber varchar(11) [not null, unique]
+  phone varchar(20) [unique]
+  email varchar(255) [unique]
+  birthDate date [not null]
+  city varchar(100) [not null]
+  neighborhood varchar(100) [not null]
+  address varchar(200) [not null]
+  cep varchar(15) [not null]
+  companyName varchar(150) [unique]
+  contractType contract_type [not null]
+  salary "numeric(10, 2)" [not null]
+  admissionDate date [not null]
+  rescissionDate date
+  photoUrl varchar(255)
+  residenceProofUrl varchar(255)
+  active integer [not null, default: 1]
+  deletedAt timestamp
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table enrollments {
+  id integer [pk, not null]
+  studentId integer [not null]
+  cardCode char(12) [not null, unique]
+  collegeId integer [not null]
+  course varchar(150) [not null]
+  semester integer [not null]
+  year integer [not null]
+  monthlyFee "numeric(10, 2)" [not null]
+  enrollmentFee "numeric(10, 2)" [not null]
+  status enrollment_status [not null, default: 'ACTIVE']
+  photoUrl varchar(255)
+  residenceProofUrl varchar(255)
+  collegeEnrollmentUrl varchar(255)
+  deletedAt timestamp
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    
+    (studentId, year, semester) [name: 'enrollment_unique_student_period', unique]
+  }
+}
+
+table payers {
+  id integer [pk, not null]
+  type payer_type [not null]
+  studentId integer
+  companyName varchar(150)
+  active integer [not null]
+  createdAt timestamp [not null, default: `now()`]
+}
+
+table prices {
+  id integer [pk, not null]
+  price "numeric(10, 2)" [not null]
+  type account_receivable_type [not null, unique]
+  paymentType payment_type [not null, default: 'ANY']
+  dueDate date [not null]
+  active integer [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table route_stops {
+  id integer [pk, not null]
+  routeId integer [not null]
+  stopId integer [not null]
+  stopOrder integer [not null]
+  estimatedArrival integer [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    (routeId, stopOrder) [name: 'unique_route_stop_order', unique]
+  }
+}
+
+table routes {
+  id integer [pk, not null]
+  name varchar(150) [not null]
+  vehicleId integer [not null]
+  driverId integer [not null]
+  startLat "numeric(10, 7)" [not null]
+  startLong "numeric(10, 7)" [not null]
+  endLat "numeric(10, 7)" [not null]
+  endLong "numeric(10, 7)" [not null]
+  startTime time [not null]
+  endTime time
+  estimatedDuration integer [not null]
+  active integer [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+  deletedAt timestamp
+}
+
+table sessions {
+  id uuid [pk, not null, default: `gen_random_uuid()`]
+  userId integer [not null, unique]
+  refresh_token varchar(255) [not null, unique]
+  expires_at timestamp [not null]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+}
+
+table stops {
+  id integer [pk, not null]
+  name varchar(150) [not null]
+  city varchar(100) [not null]
+  neighborhood varchar(100) [not null]
+  address varchar(200) [not null]
+  cep varchar(15) [not null]
+  latitude "numeric(10, 7)" [not null]
+  longitude "numeric(10, 7)" [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table student_routes {
+  id integer [pk, not null]
+  studentId integer [not null]
+  routeStopId integer [not null]
+  routePeriod route_period [not null]
+  departureTime time [not null]
+  returnTime time [not null]
+  startDate date [not null]
+  endDate date
+  active integer [not null]
+  deletedAt timestamp
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    
+    (studentId, routeStopId, routePeriod) [name: 'unique_student_route_time', unique]
+  }
+}
+
+table students {
+  id integer [pk, not null]
+  userId integer [not null, unique]
+  name varchar(150) [not null]
+  motherName varchar(150) [not null]
+  cpf varchar(14) [not null, unique]
+  rg varchar(12) [not null, unique]
+  cin varchar(11) [unique]
+  email varchar(255) [not null, unique]
+  phone varchar(20) [not null, unique]
+  birthDate date [not null]
+  collegeId integer [not null]
+  course varchar(150) [not null]
+  semester integer [not null]
+  year integer [not null]
+  city varchar(100) [not null]
+  neighborhood varchar(100) [not null]
+  address varchar(200) [not null]
+  cep varchar(15) [not null]
+  photoUrl varchar(255)
+  residenceProofUrl varchar(255)
+  notes varchar(1000)
+  active integer [not null, default: 1]
+  deletedAt timestamp
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table users {
+  id integer [pk, not null]
+  username varchar(255) [not null, unique]
+  email varchar(255) [not null, unique]
+  password varchar(255) [not null]
+  role user_role [not null]
+  active integer [not null, default: 1]
+  emailVerificationDate date
+  deletedAt timestamp
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table vehicles {
+  id integer [pk, not null]
+  plate varchar(10) [not null, unique]
+  model varchar(50) [not null]
+  type vehicle_type [not null]
+  capacity integer [not null]
+  active integer [not null]
+  notes varchar(1000)
+  deletedAt timestamp
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+Ref: accounts_receivable.payerId > payers.id
+Ref: accounts_receivable.enrollmentId > enrollments.id
+
+Ref: audit_logs.userId > users.id
+
+Ref: card_validations.studentId > students.id
+Ref: card_validations.driverId > drivers.id
+Ref: card_validations.routeId > routes.id
+
+Ref: drivers.userId > users.id
+
+Ref: enrollments.studentId > students.id
+Ref: enrollments.collegeId > colleges.id
+
+Ref: payers.studentId > students.id
+
+Ref: route_stops.routeId > routes.id
+Ref: route_stops.stopId > stops.id
+
+Ref: routes.vehicleId > vehicles.id
+Ref: routes.driverId > drivers.id
+
+Ref: sessions.userId > users.id
+
+Ref: student_routes.studentId > students.id
+Ref: student_routes.routeStopId > route_stops.id
+
+Ref: students.userId > users.id
+Ref: students.collegeId > colleges.id
