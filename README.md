@@ -41,7 +41,7 @@ Para garantir a validação das carteirinhas mesmo sem conexão com a internet:
 
 Para geração das mensalidades no primeiro dia do mês:
 
-- Jobs e fila de eventos no backend com BullMQ para processar validações de carteirinha pendentes
+- Jobs e fila de eventos no backend com BullMQ para geração de mensalidades e processamento de validações de carteirinha pendentes
 
 ## 🛠️ Tecnologias Utilizadas
 
