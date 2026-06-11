@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { RegexPatterns } from '../../shared/utils/regex.utils';
 
+// Schema de validação para criação de instituição de ensino nas requisições HTTP, utilizando a biblioteca Zod para validação e transformação dos dados de entrada
 export const collegeRegistrationSchema = z.object({
     name: z.string().trim().max(150, "O nome da instituição de ensino não pode ter mais de 150 caracteres"),
     city: z.string().max(100, "O nome da cidade não pode ter mais de 100 caracteres"),

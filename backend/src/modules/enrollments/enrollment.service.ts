@@ -236,6 +236,7 @@ export default class EnrollmentService {
         return enrollment;
     }
 
+    // serviço para gerar as mensalidades, que é chamado pelo worker do job de geração de mensalidades
     async generateMonthlyFees() {
         const now = new Date();
 

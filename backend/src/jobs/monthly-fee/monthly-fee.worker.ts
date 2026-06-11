@@ -8,6 +8,7 @@ const connection = getRedisClient()!;
 connection.options.maxRetriesPerRequest = null;
 connection.options.enableReadyCheck = false;
 
+// worker para processar os jobs de geração de mensalidades que gera as mensalidades para as matrículas ativas que ainda não possuem mensalidade gerada para o mês/ano especificado, e que possuem taxa de matrícula paga
 export function createMonthlyFeeWorker() {
     const worker = new Worker(
         'monthly-fee',

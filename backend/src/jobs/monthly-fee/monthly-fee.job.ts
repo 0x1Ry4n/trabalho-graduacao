@@ -5,6 +5,8 @@ const connection = getRedisClient()!;
 connection.options.maxRetriesPerRequest = null;
 connection.options.enableReadyCheck = false;
 
+
+// fila de eventos do job de geração de mensalidades
 export const monthlyFeeQueue = new Queue('monthly-fee', {
     connection,
     defaultJobOptions: {
@@ -15,6 +17,7 @@ export const monthlyFeeQueue = new Queue('monthly-fee', {
     },
 });
 
+// cronjob para agendar a geração de mensalidades no primeiro dia de cada mês às 8h da manhã
 export async function scheduleMonthlyFeeJob() {
     await monthlyFeeQueue.upsertJobScheduler(
         'monthly-fee-scheduler',

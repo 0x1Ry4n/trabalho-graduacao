@@ -172,6 +172,7 @@ export default class EnrollmentRepository extends BaseRepository<Enrollment> imp
         return enrollment ?? null;
     }
 
+    // Busca matrículas ativas que ainda não possuem mensalidade gerada para o mês/ano especificado e que possuem taxa de matrícula paga 
     async findActiveWithoutMonthlyFee(month: number, year: number): Promise<Enrollment[] | null> {
         const enrollmentFeeTable = alias(accountsReceivableTable, 'enrollment_fee');
 
@@ -215,7 +216,7 @@ export default class EnrollmentRepository extends BaseRepository<Enrollment> imp
                 and(
                     eq(enrollmentsTable.status, EnrollmentStatus.ACTIVE),
                     isNull(accountsReceivableTable.id),       // sem mensalidade gerada no período
-                    isNotNull(enrollmentFeeTable.id),         // taxa de matrícula paga
+                    isNotNull(enrollmentFeeTable.id),         // taxa de matrícula não paga
                 )
             );
     }
