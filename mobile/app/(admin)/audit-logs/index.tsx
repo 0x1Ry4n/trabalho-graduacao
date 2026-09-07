@@ -6,7 +6,10 @@ import { ScreenHeader } from '../../../src/components/ui/ScreenHeader';
 import { TopRefreshButton, LoadingSpinner, SearchBar } from '../../../src/components/shared';
 import DatePickerInput from '../../../src/components/ui/DatePickerInput';
 import { auditApi } from '../../../src/api/audit';
-import * as FileSystem from 'expo-file-system';
+// expo-file-system 19 moveu a API baseada em caminhos (cacheDirectory,
+// writeAsStringAsync, EncodingType) para o entrypoint /legacy. O import
+// abaixo preserva exatamente o comportamento anterior.
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 
 function isWithinPeriod(item: any, start: string, end: string) {
@@ -33,8 +36,8 @@ export default function AuditLogsAdmin() {
     const load = useCallback(async (p = 1) => {
         try {
             const resp = await auditApi.listPaginated(p, 50);
-            setLogs(resp.items || []);
-            setFiltered(resp.items || []);
+            setLogs(resp.data || []);
+            setFiltered(resp.data || []);
         } catch (err) {
             const message = (err as any)?.response?.data?.message || (err as any)?.message || 'Não foi possível carregar logs de auditoria.';
             Alert.alert('Erro', String(message));
@@ -66,9 +69,9 @@ export default function AuditLogsAdmin() {
             let p = 1;
             while (true) {
                 const resp = await auditApi.listPaginated(p, 200);
-                if (!resp.items || resp.items.length === 0) break;
-                all = all.concat(resp.items);
-                if (resp.items.length < 200) break;
+                if (!resp.data || resp.data.length === 0) break;
+                all = all.concat(resp.data);
+                if (resp.data.length < 200) break;
                 p += 1;
             }
 

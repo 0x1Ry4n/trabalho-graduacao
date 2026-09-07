@@ -4,3 +4,9 @@
 
 expo-env.d.ts
 # @end expo-cli
+
+# Variaveis de ambiente locais (contem a URL/IP da API).
+# O .env.example fica versionado como referencia.
+.env
+.env.local
+.env.*.local

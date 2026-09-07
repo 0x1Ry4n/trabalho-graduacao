@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { BackHandler } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { NativeBaseProvider, useColorMode } from 'native-base';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useAuthStore } from '../src/store/auth.store';
+import { authEvents } from '../src/api/client';
 import { useThemeStore } from '../src/store/theme.store';
 import { initDatabase } from '../src/database/db';
 import { nativeBaseTheme } from '../src/theme/nativebase.config';
@@ -39,6 +40,14 @@ function AppContent() {
   useEffect(() => {
     setColorMode(themeMode);
   }, [themeMode, setColorMode]);
+
+  // Navegacao por sessao expirada mora na camada de UI. O interceptor apenas
+  // emite o evento e o store limpa o estado; nenhum dos dois conhece rotas.
+  useEffect(() => {
+    return authEvents.on('session:expired', () => {
+      router.replace('/(auth)/login');
+    });
+  }, []);
 
   const isDark = themeMode === 'dark';
 

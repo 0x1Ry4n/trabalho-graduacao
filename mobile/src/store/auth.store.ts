@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import * as SecureStore from 'expo-secure-store';
-import { authApi } from '../api/auth';
-import { AuthUser, UserRole } from '../types';
-import { SECURE_KEYS } from '../api/client';
 import axios from 'axios';
+import { authApi } from '../api/auth';
+import { AuthUser } from '../types';
+import { SECURE_KEYS, authEvents, tokenStorage } from '../api/client';
 
 interface AuthStore {
   user: AuthUser | null;
@@ -15,9 +15,11 @@ interface AuthStore {
   logout: () => Promise<void>;
   loadFromStorage: () => Promise<void>;
   clearError: () => void;
+  /** Limpa o estado quando o servidor invalida a sessão. */
+  handleSessionExpired: () => void;
 }
 
-export const useAuthStore = create<AuthStore>((set, get) => ({
+export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
   token: null,
   isAuthenticated: false,
@@ -29,7 +31,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     try {
       const data = await authApi.login(username, password);
 
-      await SecureStore.setItemAsync(SECURE_KEYS.ACCESS_TOKEN, data.accessToken);
+      // Via tokenStorage, e não SecureStore direto: a gravação precisa
+      // invalidar o cache em memória usado pelo interceptor de request.
+      await tokenStorage.setAccessToken(data.accessToken);
+
       if (data.refreshToken) {
         await SecureStore.setItemAsync(
           SECURE_KEYS.REFRESH_TOKEN,
@@ -71,18 +76,19 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     try {
       await authApi.logout();
     } catch {
-      // ignore logout API errors
+      // Falha ao avisar o servidor não pode impedir o logout local.
     }
-    await SecureStore.deleteItemAsync(SECURE_KEYS.ACCESS_TOKEN);
-    await SecureStore.deleteItemAsync(SECURE_KEYS.REFRESH_TOKEN);
-    await SecureStore.deleteItemAsync(SECURE_KEYS.USER_DATA);
+    await tokenStorage.clearSession();
     set({ user: null, token: null, isAuthenticated: false });
   },
 
   loadFromStorage: async () => {
     set({ isLoading: true });
     try {
-      const token = await SecureStore.getItemAsync(SECURE_KEYS.ACCESS_TOKEN);
+      // Descarta qualquer token cacheado de uma sessão anterior do processo.
+      tokenStorage.invalidateCache();
+
+      const token = await tokenStorage.getAccessToken();
       const userRaw = await SecureStore.getItemAsync(SECURE_KEYS.USER_DATA);
 
       if (token && userRaw) {
@@ -97,4 +103,27 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   },
 
   clearError: () => set({ error: null }),
+
+  handleSessionExpired: () =>
+    set({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      isLoading: false,
+      error: 'Sessão expirada. Faça login novamente.',
+    }),
 }));
+
+/**
+ * Ponte entre a camada de API e a de estado.
+ *
+ * O interceptor emite `session:expired` quando o refresh falha em definitivo;
+ * o store apenas limpa o estado. A navegação é responsabilidade da UI
+ * (`app/_layout.tsx`), mantendo a separação exigida por `.claude/rules.md` —
+ * a versão anterior chamava `router.replace` de dentro do interceptor.
+ *
+ * Os tokens já foram apagados pelo interceptor antes da emissão.
+ */
+authEvents.on('session:expired', () => {
+  useAuthStore.getState().handleSessionExpired();
+});

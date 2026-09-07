@@ -7,9 +7,8 @@ import { RefreshControl, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
-import * as SecureStore from 'expo-secure-store';
 import { enrollmentsApi } from '../../../src/api/enrollments';
-import { BASE_URL } from '../../../src/api/client';
+import { uploadApi } from '../../../src/api/upload';
 import { studentsApi } from '../../../src/api/students';
 import { collegesApi } from '../../../src/api/colleges';
 import { Enrollment, EnrollmentStatus, Student, College, AccountReceivableType } from '../../../src/types';
@@ -169,22 +168,7 @@ export default function EnrollmentsListScreen() {
             });
             if (result.canceled) return;
             const file = result.assets[0];
-            const formData = new FormData();
-            formData.append('file', {
-                uri: file.uri,
-                name: file.name,
-                type: file.mimeType || 'application/octet-stream',
-            } as any);
-            const token = await SecureStore.getItemAsync('token');
-            const response = await fetch(`${BASE_URL}/upload`, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
-            if (!response.ok) throw new Error('Upload failed');
-            const data = await response.json();
+            const data = await uploadApi.upload(file);
             setCollegeEnrollmentUrl(data.url);
             toast.show({ description: 'Arquivo anexado com sucesso!', placement: 'top' });
         } catch (error) {

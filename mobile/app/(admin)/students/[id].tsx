@@ -7,7 +7,6 @@ import { Alert, Linking } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
-import * as SecureStore from 'expo-secure-store';
 import { studentsApi } from '../../../src/api/students';
 import { enrollmentsApi } from '../../../src/api/enrollments';
 import { paymentsApi } from '../../../src/api/payments';
@@ -18,7 +17,7 @@ import { ScreenHeader } from '../../../src/components/ui/ScreenHeader';
 import { LoadingSpinner, InfoRow } from '../../../src/components/shared';
 import { maskPhone, maskCEP, unmask, formatCPF, formatPhone, formatRG } from '../../../src/utils/masks';
 import { isCompleteCep, useCepAddress } from '../../../src/utils/address.utils';
-import { BASE_URL, SECURE_KEYS } from '../../../src/api/client';
+import { uploadApi } from '../../../src/api/upload';
 import QRCode from 'react-native-qrcode-svg';
 
 function formatDateBR(value?: string | null) {
@@ -202,24 +201,8 @@ export default function StudentDetailScreen() {
   }
 
   async function uploadFile(file: DocumentPicker.DocumentPickerAsset) {
-    const formData = new FormData();
-    formData.append('file', {
-      uri: file.uri,
-      name: file.name,
-      type: file.mimeType || 'application/octet-stream',
-    } as any);
-
-    const token = await SecureStore.getItemAsync(SECURE_KEYS.ACCESS_TOKEN);
-    const response = await fetch(`${BASE_URL}/upload`, {
-      method: 'POST',
-      body: formData,
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    });
-
-    if (!response.ok) throw new Error('O upload do arquivo falhou!');
-
-    const data = await response.json();
-    return data.url ?? data.data?.url;
+    const data = await uploadApi.upload(file);
+    return data.url;
   }
 
   async function handlePickStudentPhoto() {

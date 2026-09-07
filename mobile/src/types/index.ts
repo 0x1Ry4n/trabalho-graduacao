@@ -485,12 +485,27 @@ export interface StudentRoute {
 
 // ─── Pagination ───────────────────────────────────────────────────────────────
 
+/**
+ * Metadados de paginacao, espelhando `PaginationMeta` do backend
+ * (`shared/utils/pagination/pagination.types.ts`).
+ */
+export interface PaginationMeta {
+  count: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+/**
+ * Resposta paginada.
+ *
+ * A forma anterior (`{ data, total, page, limit, totalPages }`) nao existia em
+ * lugar nenhum: o backend devolve `{ data, pagination }` e o interceptor
+ * descartava o `pagination` inteiro ao desembrulhar o envelope.
+ */
 export interface PaginatedResponse<T> {
   data: T[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  pagination: PaginationMeta;
 }
 
 // ─── Offline / Sync ───────────────────────────────────────────────────────────

@@ -1,12 +1,25 @@
 import React, { useCallback } from 'react';
 import { Alert } from 'react-native';
+import axios from 'axios';
+import { ApiError as ApiErrorClass, isNetworkError } from '../api/client';
+import type { ApiErrorBody, FieldErrors } from '../api/client';
 
-export interface ApiError {
-    response?: {
-        status: number;
-        data?: any;
-    };
+/**
+ * Formato aceito pelos utilitários de erro.
+ *
+ * As funções aceitam `unknown` e fazem a discriminação internamente — antes
+ * havia uma interface `ApiError` local com `data?: any` que duplicava (mal) os
+ * tipos do axios e obrigava casts `error as ApiError` em toda tela.
+ *
+ * @deprecated Mantido apenas para compatibilidade dos casts existentes.
+ * Passe o erro direto: as funções já lidam com `unknown`.
+ */
+export type ApiError = unknown;
+
+interface ExtractedError {
+    status?: number;
     message?: string;
+    fieldErrors: FieldErrors;
 }
 
 function flattenErrorMessages(errors: unknown): string[] {
@@ -23,54 +36,91 @@ function flattenErrorMessages(errors: unknown): string[] {
     return [];
 }
 
-export function getErrorMessage(error: ApiError): string {
-    console.error('API Error:', error.response?.data || error.message);
-
-    let errorMessage = 'Não foi possível completar a operação. Verifique os dados e tente novamente.';
-
-    if (error.response) {
-        const { status, data } = error.response;
-        const validationMessages = flattenErrorMessages(data?.errors);
-
-        // Erro de validação (422) - mostrar erros específicos de campos
-        if ((status === 400 || status === 422) && validationMessages.length > 0) {
-            errorMessage = validationMessages.join('\n');
-        }
-        // Erro de conflito (409) - dados duplicados
-        else if (status === 409) {
-            errorMessage = data?.message || 'Dados já existem no sistema. Verifique os dados informados.';
-        }
-        // Erro de requisição inválida (400)
-        else if (status === 400) {
-            errorMessage = data?.message || 'Dados inválidos. Verifique todas as informações.';
-        }
-        // Erro de não encontrado (404)
-        else if (status === 404) {
-            errorMessage = data?.message || 'Recurso não encontrado.';
-        }
-        // Erro de não autorizado (401)
-        else if (status === 401) {
-            errorMessage = 'Sessão expirada. Faça login novamente.';
-        }
-        // Erro de proibido (403)
-        else if (status === 403) {
-            errorMessage = 'Você não tem permissão para realizar esta ação.';
-        }
-        // Outros erros do servidor (5xx)
-        else if (status >= 500) {
-            errorMessage = 'Erro interno do servidor. Tente novamente em alguns minutos.';
-        }
-        // Outros erros de cliente (4xx)
-        else if (status >= 400) {
-            errorMessage = data?.message || 'Erro na requisição. Verifique os dados.';
-        }
+/**
+ * Normaliza qualquer erro para `{ status, message, fieldErrors }`.
+ *
+ * Cobre os três formatos que circulam no app: o `ApiError` lançado pelo
+ * interceptor, um `AxiosError` cru e um `Error` comum.
+ */
+function extract(error: unknown): ExtractedError {
+    if (error instanceof ApiErrorClass) {
+        return {
+            status: error.status,
+            message: error.response?.data?.message ?? error.message,
+            fieldErrors: error.fieldErrors,
+        };
     }
 
-    return errorMessage;
+    if (axios.isAxiosError<ApiErrorBody>(error)) {
+        return {
+            status: error.response?.status,
+            message: error.response?.data?.message ?? error.message,
+            fieldErrors: error.response?.data?.errors ?? {},
+        };
+    }
+
+    if (error instanceof Error) {
+        return { message: error.message, fieldErrors: {} };
+    }
+
+    return { fieldErrors: {} };
+}
+
+export function getErrorMessage(error: unknown): string {
+    if (__DEV__) {
+        console.error('API Error:', error);
+    }
+
+    const { status, message, fieldErrors } = extract(error);
+
+    if (isNetworkError(error)) {
+        return 'Sem conexão com o servidor. Verifique sua internet e tente novamente.';
+    }
+
+    if (status === undefined) {
+        return 'Não foi possível completar a operação. Verifique os dados e tente novamente.';
+    }
+
+    const validationMessages = flattenErrorMessages(fieldErrors);
+
+    // Erro de validação (400/422) - mostrar erros específicos de campos
+    if ((status === 400 || status === 422) && validationMessages.length > 0) {
+        return validationMessages.join('\n');
+    }
+    // Erro de conflito (409) - dados duplicados
+    if (status === 409) {
+        return message || 'Dados já existem no sistema. Verifique os dados informados.';
+    }
+    // Erro de requisição inválida (400)
+    if (status === 400) {
+        return message || 'Dados inválidos. Verifique todas as informações.';
+    }
+    // Erro de não encontrado (404)
+    if (status === 404) {
+        return message || 'Recurso não encontrado.';
+    }
+    // Erro de não autorizado (401)
+    if (status === 401) {
+        return 'Sessão expirada. Faça login novamente.';
+    }
+    // Erro de proibido (403)
+    if (status === 403) {
+        return 'Você não tem permissão para realizar esta ação.';
+    }
+    // Outros erros do servidor (5xx)
+    if (status >= 500) {
+        return 'Erro interno do servidor. Tente novamente em alguns minutos.';
+    }
+    // Outros erros de cliente (4xx)
+    if (status >= 400) {
+        return message || 'Erro na requisição. Verifique os dados.';
+    }
+
+    return 'Não foi possível completar a operação. Verifique os dados e tente novamente.';
 }
 
 export function useErrorHandler() {
-    return useCallback((error: ApiError, defaultMessage?: string): string => {
+    return useCallback((error: unknown, defaultMessage?: string): string => {
         return defaultMessage || getErrorMessage(error);
     }, []);
 }
@@ -78,21 +128,21 @@ export function useErrorHandler() {
 export function useErrorAlert() {
     const getError = useErrorHandler();
 
-    return useCallback((error: ApiError, title: string = 'Erro', defaultMessage?: string) => {
+    return useCallback((error: unknown, title: string = 'Erro', defaultMessage?: string) => {
         const message = getError(error, defaultMessage);
         Alert.alert(title, message);
     }, [getError]);
 }
 
-export function withErrorHandler<T extends any[], R>(
+export function withErrorHandler<T extends unknown[], R>(
     operation: (...args: T) => Promise<R>,
-    errorHandler: (error: ApiError) => void
+    errorHandler: (error: unknown) => void
 ) {
     return async (...args: T): Promise<R | undefined> => {
         try {
             return await operation(...args);
         } catch (error) {
-            errorHandler(error as ApiError);
+            errorHandler(error);
             return undefined;
         }
     };
@@ -103,24 +153,26 @@ export function useFormError() {
     const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
     const [isLoading, setIsLoading] = React.useState(false);
 
-    const parseFieldErrors = (err: ApiError): Record<string, string> => {
-        if (err.response?.status === 422 && err.response?.data?.errors) {
-            const { errors } = err.response.data;
-            if (typeof errors === 'object' && !Array.isArray(errors)) {
-                const result: Record<string, string> = {};
-                for (const [key, value] of Object.entries(errors)) {
-                    const messages = flattenErrorMessages(value);
-                    if (messages.length > 0) {
-                        result[key] = messages[0];
-                    }
-                }
-                return result;
+    const parseFieldErrors = (err: unknown): Record<string, string> => {
+        const { status, fieldErrors: raw } = extract(err);
+
+        if (status !== 400 && status !== 422) {
+            return {};
+        }
+
+        const result: Record<string, string> = {};
+
+        for (const [key, value] of Object.entries(raw)) {
+            const messages = flattenErrorMessages(value);
+            if (messages.length > 0) {
+                result[key] = messages[0];
             }
         }
-        return {};
+
+        return result;
     };
 
-    const handleError = useCallback((err: ApiError, defaultMessage?: string) => {
+    const handleError = useCallback((err: unknown, defaultMessage?: string) => {
         const fields = parseFieldErrors(err);
         setFieldErrors(fields);
         const message = getErrorMessage(err) || defaultMessage || 'Ocorreu um erro inesperado.';
@@ -143,7 +195,7 @@ export function useFormError() {
     }, []);
 
     const withFormError = useCallback(
-        <T extends any[], R>(
+        <T extends unknown[], R>(
             operation: (...args: T) => Promise<R>
         ) => {
             return async (...args: T): Promise<R | undefined> => {
@@ -153,7 +205,7 @@ export function useFormError() {
                     clearError();
                     return result;
                 } catch (error) {
-                    handleError(error as ApiError);
+                    handleError(error);
                     return undefined;
                 } finally {
                     stopLoading();

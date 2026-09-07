@@ -9,14 +9,13 @@ import QRCode from 'react-native-qrcode-svg';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';
-import * as SecureStore from 'expo-secure-store';
 import { enrollmentsApi } from '../../../src/api/enrollments';
 import { paymentsApi } from '../../../src/api/payments';
 import { AccountReceivable, AccountReceivableType, AccountStatus, Enrollment, EnrollmentStatus } from '../../../src/types';
 import { ScreenHeader } from '../../../src/components/ui/ScreenHeader';
 import { LoadingSpinner, InfoRow } from '../../../src/components/shared';
 import { formatRG, maskCPF, maskCurrency, maskPhone } from '../../../src/utils/masks';
-import { BASE_URL, SECURE_KEYS } from '../../../src/api/client';
+import { uploadApi } from '../../../src/api/upload';
 
 function statusLabel(s: EnrollmentStatus) {
     return s === 'ACTIVE' ? 'Ativo' : s === 'CANCELED' ? 'Cancelado' : 'Encerrado';
@@ -291,24 +290,8 @@ export default function EnrollmentDetailScreen() {
     }
 
     async function uploadFile(file: DocumentPicker.DocumentPickerAsset) {
-        const formData = new FormData();
-        formData.append('file', {
-            uri: file.uri,
-            name: file.name,
-            type: file.mimeType || 'application/octet-stream',
-        } as any);
-
-        const token = await SecureStore.getItemAsync(SECURE_KEYS.ACCESS_TOKEN);
-        const response = await fetch(`${BASE_URL}/upload`, {
-            method: 'POST',
-            body: formData,
-            headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        });
-
-        if (!response.ok) throw new Error('Upload failed');
-
-        const data = await response.json();
-        return data.url ?? data.data?.url;
+        const data = await uploadApi.upload(file);
+        return data.url;
     }
 
     const pickDocument = async () => {
