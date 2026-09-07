@@ -11,12 +11,23 @@ export default class CacheService {
         return getRedisClient();
     }
 
+    /**
+     * Indica se o cache esta utilizavel neste instante.
+     *
+     * Chamadores devem usar isto para decidir se vale a pena tentar o cache,
+     * mas nunca para decidir se a operacao pode prosseguir: toda leitura/escrita
+     * precisa ter um caminho valido com o cache indisponivel.
+     */
+    isAvailable(): boolean {
+        return this.getClient() !== null && isRedisConnected();
+    }
+
     async get<T>(key: string): Promise<T | null> {
         try {
             const client = this.getClient();
 
             if (!client || !isRedisConnected()) {
-                logger.warn('Redis not ready, skipping cache get');
+                logger.debug('Redis not ready, skipping cache get');
                 return null;
             }
 
@@ -35,7 +46,7 @@ export default class CacheService {
             const client = this.getClient();
 
             if (!client || !isRedisConnected()) {
-                logger.warn('Redis not ready, skipping cache set');
+                logger.debug('Redis not ready, skipping cache set');
                 return;
             }
 

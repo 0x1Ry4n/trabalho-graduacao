@@ -23,11 +23,10 @@ const DATABASE_POOL_MIN = process.env.DATABASE_POOL_MIN ?? "2";
 const DATABASE_IDLE_TIMEOUT = process.env.DATABASE_IDLE_TIMEOUT ?? "30000";
 const DATABASE_CONNECTION_TIMEOUT = process.env.DATABASE_CONNECTION_TIMEOUT ?? "5000";
 
-const REDIS_ENABLED = process.env.REDIS_ENABLED;
-
-if (!REDIS_ENABLED) {
-    throw new Error("REDIS_ENABLED is not defined. Please define the flag if redis should be enabled to initalize the server")
-}
+// REDIS_ENABLED chega como string. A comparacao precisa ser explicita: a
+// checagem anterior (`if (REDIS_ENABLED && ...)`) considerava a string "false"
+// como verdadeira, tornando impossivel subir o servidor sem Redis configurado.
+const REDIS_ENABLED = (process.env.REDIS_ENABLED ?? "false").trim().toLowerCase() === "true";
 
 const REDIS_HOST = process.env.REDIS_HOST;
 
@@ -41,13 +40,22 @@ if (REDIS_ENABLED && !REDIS_PORT) {
     throw new Error("REDIS_PORT is not defined. Please define the redis port if redis should be enabled to initalize the server")
 }
 
-const SESSION_STORAGE_METHOD = process.env.SESSION_STORAGE_METHOD ?? "database";
+const SESSION_STORAGE_METHOD = (process.env.SESSION_STORAGE_METHOD ?? "database").trim().toLowerCase();
 
-const REDIS_PASSWORD = process.env.REDIS_PASSWORD;
-
-if (REDIS_ENABLED && !REDIS_PASSWORD) {
-    throw new Error("REDIS_PASSWORD is not defined. Please define the redis password if redis should be enabled to initalize the server")
+if (!["database", "redis"].includes(SESSION_STORAGE_METHOD)) {
+    throw new Error(`Invalid SESSION_STORAGE_METHOD: "${SESSION_STORAGE_METHOD}". Use "database" or "redis"`)
 }
+
+// Senha e opcional: instancias locais/dev normalmente rodam sem `requirepass`.
+// Os valores "null"/"none" (usados nos .env de exemplo) sao tratados como ausencia
+// de senha em vez de virarem uma senha literal enviada ao servidor.
+const RAW_REDIS_PASSWORD = (process.env.REDIS_PASSWORD ?? "").trim();
+const REDIS_PASSWORD =
+    RAW_REDIS_PASSWORD === "" ||
+        RAW_REDIS_PASSWORD.toLowerCase() === "null" ||
+        RAW_REDIS_PASSWORD.toLowerCase() === "none"
+        ? undefined
+        : RAW_REDIS_PASSWORD;
 
 const REDIS_MAX_RECONNECTION_ATTEMPTS = process.env.REDIS_MAX_RECONNECTION_ATTEMPTS ?? "10";
 const REDIS_RECONNECT_BASE_DELAY = process.env.REDIS_RECONNECT_BASE_DELAY ?? "1000";
@@ -128,7 +136,7 @@ export const envConfig = {
         connectionTimeoutMillis: Number(DATABASE_CONNECTION_TIMEOUT),
     },
     redis: {
-        redisEnabled: REDIS_ENABLED === "true",
+        redisEnabled: REDIS_ENABLED,
         redisHost: REDIS_HOST,
         redisPort: REDIS_PORT,
         redisPassword: REDIS_PASSWORD,
