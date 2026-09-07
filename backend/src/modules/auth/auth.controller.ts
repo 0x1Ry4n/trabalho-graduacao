@@ -32,18 +32,23 @@ export default class AuthController {
             return SendResponse.unauthorized(res, "Refresh token não fornecido");
         }
 
-        const result = await this.authService.refresh({
-            refreshToken,
-            userId: req.user!.id,
-        });
+        const result = await this.authService.refresh({ refreshToken });
 
         this.setAccessCookie(res, result.accessToken);
-        return SendResponse.success(res, { user: result.user }, "Token atualizado com sucesso");
+
+        // O accessToken vai tambem no body: clientes nativos (mobile) nao usam
+        // cookies e precisam persistir o token no SecureStore.
+        return SendResponse.success(
+            res,
+            { accessToken: result.accessToken, user: result.user },
+            "Token atualizado com sucesso"
+        );
     }
 
 
     async logout(req: Request, res: Response): Promise<Response> {
-        const refreshToken = req.cookies?.refreshToken;
+        // Aceita refresh token via cookie (web) ou body (mobile)
+        const refreshToken = req.cookies?.refreshToken ?? req.body?.refreshToken;
 
         if (refreshToken) {
             await this.authService.logout(refreshToken);

@@ -13,9 +13,12 @@ authRoutes.post(
    authController.login.bind(authController)
 );
 
+// Sem AuthMiddleware por design: o refresh e autenticado pelo proprio refresh
+// token (verificado no AuthService e validado contra o session store). Exigir um
+// access token valido aqui tornaria a rota inutil, ja que ela so e chamada
+// quando o access token expirou.
 authRoutes.post(
    '/auth/refresh',
-   AuthMiddleware,
    authController.refresh.bind(authController)
 );
 

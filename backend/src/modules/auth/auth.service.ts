@@ -6,7 +6,7 @@ import { hoursFromNow } from "../../shared/utils/date.utils";
 import { envConfig } from "../../config/env/env.config";
 import { LoginUserDTO } from "./dto/index.dto";
 import { UserWithoutPassword } from "../users/interfaces/UserWithoutPassword";
-import jwt from "jsonwebtoken";
+import jwt, { TokenExpiredError } from "jsonwebtoken";
 import SessionService from "../sessions/session.service";
 import UserRepository from "../users/repository/user.repository";
 
@@ -21,8 +21,12 @@ interface TokenPair {
 }
 
 interface RefreshTokenPayload {
-    userId: number;
     refreshToken: string;
+}
+
+interface RefreshTokenClaims {
+    sub: string | number;
+    role: string;
 }
 
 interface UserResponse {
@@ -77,19 +81,32 @@ export default class AuthService {
         };
     }
 
+    /**
+     * Renova o access token a partir do refresh token.
+     *
+     * A identidade do usuário é derivada do próprio refresh token — a rota NÃO
+     * exige um access token válido, já que o motivo de existir do refresh é
+     * justamente o access token ter expirado.
+     */
     async refresh(payload: RefreshTokenPayload): Promise<{
         accessToken: string;
         user: UserResponse;
     }> {
+        const userId = this.verifyRefreshToken(payload.refreshToken);
+
         await this.sessionService.validateRefreshToken(
-            payload.userId,
+            userId,
             payload.refreshToken
         );
 
-        const user = await this.userRepository.findById(payload.userId);
+        const user = await this.userRepository.findById(userId);
 
         if (!user) {
             throw new ApiError("Usuário não encontrado", StatusCodes.UNAUTHORIZED);
+        }
+
+        if (user.active !== 1) {
+            throw new ApiError("O usuário foi inativado", StatusCodes.UNAUTHORIZED);
         }
 
         const accessToken = this.generateAccessToken(user);
@@ -106,6 +123,39 @@ export default class AuthService {
 
     async logout(refreshToken: string): Promise<void> {
         await this.sessionService.remove(refreshToken);
+    }
+
+    private verifyRefreshToken(refreshToken: string): number {
+        try {
+            const decoded = jwt.verify(
+                refreshToken,
+                envConfig.auth.refreshJwtSecret
+            ) as RefreshTokenClaims;
+
+            const userId = Number(decoded.sub);
+
+            if (!Number.isInteger(userId) || userId <= 0) {
+                throw new ApiError(
+                    "Refresh token inválido",
+                    StatusCodes.UNAUTHORIZED
+                );
+            }
+
+            return userId;
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error;
+            }
+
+            if (error instanceof TokenExpiredError) {
+                throw new ApiError(
+                    "Refresh token expirado",
+                    StatusCodes.UNAUTHORIZED
+                );
+            }
+
+            throw new ApiError("Refresh token inválido", StatusCodes.UNAUTHORIZED);
+        }
     }
 
     private generateAccessToken(user: UserWithoutPassword): string {
