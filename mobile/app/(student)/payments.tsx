@@ -4,6 +4,7 @@ import {
 } from 'native-base';
 import { RefreshControl, Alert, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { router, useFocusEffect } from 'expo-router';
 import { paymentsApi } from '../../src/api/payments';
 import { AccountReceivable, AccountStatus } from '../../src/types';
 import { ScreenHeader } from '../../src/components/ui/ScreenHeader';
@@ -56,7 +57,6 @@ export default function StudentPaymentsScreen() {
   const [payments, setPayments] = useState<AccountReceivable[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [markingId, setMarkingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>('ALL');
   const [periodStart, setPeriodStart] = useState('');
   const [periodEnd, setPeriodEnd] = useState('');
@@ -77,29 +77,18 @@ export default function StudentPaymentsScreen() {
     if (user) load();
   }, [load, user]);
 
-  async function handleMarkPaid(payment: AccountReceivable) {
-    Alert.alert('Marcar como pago', `Confirmar que pagou ${brl(payment.amount)}?`, [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Confirmar',
-        onPress: async () => {
-          const paymentDate = new Date().toISOString();
-          setMarkingId(payment.id);
-          try {
-            await paymentsApi.update(payment.id, { status: AccountStatus.PAID, paymentDate });
-            setPayments((current) => current.map((item) => (
-              item.id === payment.id
-                ? { ...item, status: AccountStatus.PAID, paymentDate }
-                : item
-            )));
-          } catch {
-            Alert.alert('Erro', 'Nao foi possivel atualizar.');
-          } finally {
-            setMarkingId(null);
-          }
-        },
-      },
-    ]);
+  // Ao voltar do checkout a cobranca pode ter sido baixada; recarrega para a
+  // lista nao continuar mostrando o status antigo.
+  useFocusEffect(
+    useCallback(() => {
+      if (user) load();
+    }, [load, user]),
+  );
+
+  // A baixa deixou de ser declarada pelo aluno: quem confirma o pagamento e o
+  // webhook do gateway, no backend. Aqui so abrimos o checkout.
+  function handlePay(payment: AccountReceivable) {
+    router.push(`/(student)/checkout/${payment.id}`);
   }
 
   const totalPaid = payments
@@ -203,7 +192,7 @@ export default function StudentPaymentsScreen() {
             p="4"
             mb="3"
             shadow="1"
-            onPress={() => item.status === AccountStatus.OPEN && handleMarkPaid(item)}
+            onPress={() => item.status === AccountStatus.OPEN && handlePay(item)}
           >
             <HStack alignItems="center" justifyContent="space-between">
               <VStack flex={1}>
@@ -230,11 +219,10 @@ export default function StudentPaymentsScreen() {
                   <Button
                     size="xs"
                     mt="2"
-                    colorScheme="success"
-                    isLoading={markingId === item.id}
-                    onPress={() => handleMarkPaid(item)}
+                    colorScheme="violet"
+                    onPress={() => handlePay(item)}
                   >
-                    Marcar pago
+                    Pagar
                   </Button>
                 )}
               </VStack>

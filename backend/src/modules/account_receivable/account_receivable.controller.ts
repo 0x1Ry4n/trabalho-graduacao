@@ -43,13 +43,13 @@ export default class AccountReceivableController {
 
     async findById(req: Request, res: Response) {
         const id = Number(req.params.id);
-        const accountReceivable = await this.accountReceivableService.findById(id);
+        const accountReceivable = await this.accountReceivableService.findById(id, req.user!);
         return SendResponse.success(res, accountReceivable);
     }
 
     async findByUserId(req: Request, res: Response) {
         const userId = Number(req.params.userId);
-        const accountsReceivable = await this.accountReceivableService.findByUserId(userId);
+        const accountsReceivable = await this.accountReceivableService.findByUserId(userId, req.user!);
         return SendResponse.success(res, accountsReceivable);
     }
 

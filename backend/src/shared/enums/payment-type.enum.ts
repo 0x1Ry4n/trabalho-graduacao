@@ -3,6 +3,7 @@ export enum PaymentType {
     CREDIT_CARD = "CREDIT_CARD",
     DEBIT_CARD = "DEBIT_CARD",
     PIX = "PIX",
+    BOLETO = "BOLETO",
     BANK_TRANSFER = "BANK_TRANSFER",
     ANY = "ANY"
 }

@@ -391,6 +391,53 @@ export interface CreateAccountReceivableDto {
   status: AccountStatus;
 }
 
+// ─── Checkout ─────────────────────────────────────────────────────────────────
+
+/** Metodos que o gateway executa. Espelha `ChargeMethod` do backend. */
+export enum ChargeMethod {
+  PIX = 'PIX',
+  BOLETO = 'BOLETO',
+  CARD = 'CARD',
+}
+
+/** Ciclo de vida da cobranca. Espelha `ChargeStatus` do backend. */
+export enum ChargeStatus {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  EXPIRED = 'EXPIRED',
+  CANCELLED = 'CANCELLED',
+  REFUNDED = 'REFUNDED',
+  FAILED = 'FAILED',
+}
+
+/**
+ * Cobranca aberta num gateway.
+ *
+ * Nao ha nenhum dado de cartao aqui, nem podera haver: o cartao e processado
+ * inteiramente no checkout hospedado da AbacatePay, e a unica coisa que volta
+ * para o app e a `paymentUrl` que abre esse checkout.
+ *
+ * `brCode` e o payload EMV do Pix (copia-e-cola); `barCode` e a linha digitavel
+ * do boleto. Ambos so autorizam pagar, nunca cobrar.
+ */
+export interface PaymentCharge {
+  id: number;
+  accountReceivableId: number;
+  method: ChargeMethod;
+  status: ChargeStatus;
+  /** Valor em centavos, como o backend e o gateway trabalham. */
+  amountCents: number;
+  brCode: string | null;
+  barCode: string | null;
+  paymentUrl: string | null;
+  expiresAt: string | null;
+  paidAt: string | null;
+}
+
+export interface CreateChargeDto {
+  method: ChargeMethod;
+}
+
 // ─── Card Validation ──────────────────────────────────────────────────────────
 
 export interface CardValidation {
@@ -430,6 +477,7 @@ export enum PaymentType {
   CREDIT_CARD = 'CREDIT_CARD',
   DEBIT_CARD = 'DEBIT_CARD',
   PIX = 'PIX',
+  BOLETO = 'BOLETO',
   BANK_TRANSFER = 'BANK_TRANSFER',
   ANY = 'ANY',
 }

@@ -11,10 +11,14 @@ import { CardValidationStatus } from "./card-validation-status.enum";
 import { RoutePeriod } from "./route-period.enum";
 import { UserRole } from "./user-role.enum";
 import { AuditAction } from "./audit-action.enum";
+import { ChargeMethod } from "./charge-method.enum";
+import { ChargeStatus } from "./charge-status.enum";
+import { PaymentProvider } from "./payment-provider.enum";
 
 export {
     AccountStatus, EnrollmentStatus, PayerType,
     DriverContractType, PaymentType, PaymentProofType,
     TripExpenseCategory, TripExpenseStatus, VehicleCategory,
-    CardValidationStatus, RoutePeriod, UserRole, AuditAction
+    CardValidationStatus, RoutePeriod, UserRole, AuditAction,
+    ChargeMethod, ChargeStatus, PaymentProvider
 }

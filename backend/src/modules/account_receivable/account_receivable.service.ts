@@ -7,6 +7,7 @@ import { PaginatedDocument } from "../../shared/utils/pagination/pagination.type
 import { AccountReceivable } from "./interfaces/AccountReceivable";
 import { CreateAccountReceivableDTO, UpdateAccountReceivableDTO } from "./dto/index.dto";
 import { AccountReceivableType } from "../../shared/enums/account-receivable-type.enum";
+import { UserRole } from "../../shared/enums/user-role.enum";
 import { CreatePriceTableDTO } from "./dto/create-price-table.dto";
 import { UpdatePriceTableDTO } from "./dto/update-price-table.dto";
 import { DbTransaction } from "../../shared/database/base.repository";
@@ -16,6 +17,9 @@ import StudentRepository from "../students/repository/student.repository";
 import PayerRepository from "../payers/repository/payer.repository";
 import EnrollmentRepository from "../enrollments/repository/enrollment.repository";
 
+
+/** Quem está pedindo o recurso, vindo do `AuthMiddleware`. */
+type Requester = { id: number; role: UserRole };
 
 @Service()
 export default class AccountReceivableService {
@@ -37,28 +41,62 @@ export default class AccountReceivableService {
 
     // ─── Accounts Receivable Services ─────────────────────────────────────────────────────
 
-    async findById(id: number) {
+    async findById(id: number, requester: Requester) {
         const cacheKey = this.cacheService.generateKey(this.CACHE_PREFIX, "id", id);
 
-        const cached = await this.cacheService.get(cacheKey);
+        const cached = await this.cacheService.get<AccountReceivable>(cacheKey);
         if (cached) {
+            // A checagem fica fora do cache de proposito: quem entrega o dado
+            // precisa autorizar, senão o primeiro acesso do admin liberaria a
+            // conta para qualquer aluno que pedisse o mesmo id.
+            await this.assertCanAccess(cached.payerId, requester);
             return cached;
         }
 
         const accountReceivable = await this.accountReceivableRepository.findById(id);
         if (!accountReceivable) throw new ApiError(`Recebível não encontrado!`, StatusCodes.BAD_REQUEST);
 
+        await this.assertCanAccess(accountReceivable.payerId, requester);
+
         await this.cacheService.set(cacheKey, accountReceivable, this.LIST_CACHE_TTL);
 
         return accountReceivable;
     }
 
-    async findByUserId(userId: number) {
+    async findByUserId(userId: number, requester: Requester) {
+        // Um aluno só lista as próprias contas; trocar o `userId` na URL não
+        // pode revelar as mensalidades de outro.
+        if (requester.role === UserRole.STUDENT && requester.id !== userId) {
+            throw new ApiError(`Acesso ao recurso negado!`, StatusCodes.FORBIDDEN);
+        }
+
         const student = await this.studentRepository.findByUserId(userId);
         if (!student) throw new ApiError(`Aluno não encontrado para o usuário!`, StatusCodes.BAD_REQUEST);
 
         const accountsReceivable = await this.accountReceivableRepository.findByStudentId(student.id);
-        return accountsReceivable;
+        return accountsReceivable ?? [];
+    }
+
+    /**
+     * Restringe o aluno ao próprio recebível.
+     *
+     * `GET /accountReceivables/:id` passou a aceitar STUDENT porque o checkout
+     * precisa do valor e do vencimento antes de abrir a cobrança. Sem esta
+     * checagem, bastaria trocar o id na URL para ler a mensalidade de qualquer
+     * outro aluno. Admin e motorista mantêm o acesso amplo do resto do módulo.
+     */
+    private async assertCanAccess(payerId: number, requester: Requester) {
+        if (requester.role !== UserRole.STUDENT) return;
+
+        const payer = await this.payerRepository.findById(payerId);
+        if (!payer?.studentId) {
+            throw new ApiError(`Acesso ao recurso negado!`, StatusCodes.FORBIDDEN);
+        }
+
+        const student = await this.studentRepository.findById(payer.studentId);
+        if (!student || student.userId !== requester.id) {
+            throw new ApiError(`Acesso ao recurso negado!`, StatusCodes.FORBIDDEN);
+        }
     }
 
     async findByEnrollmentId(enrollmentId: number) {

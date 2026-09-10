@@ -123,6 +123,44 @@ if (!DEFAULT_ADMIN_PASSWORD) {
     throw new Error("DEFAULT_ADMIN_PASSWORD is not defined");
 }
 
+// ─── AbacatePay ──────────────────────────────────────────────────────────────
+// A chave de API e o segredo de webhook vivem exclusivamente aqui: nada disso
+// e exposto ao app. O aplicativo so conhece ids de cobranca e o `brCode`.
+
+const ABACATEPAY_ENABLED = (process.env.ABACATEPAY_ENABLED ?? "false").trim().toLowerCase() === "true";
+
+const ABACATEPAY_API_KEY = process.env.ABACATEPAY_API_KEY;
+
+if (ABACATEPAY_ENABLED && !ABACATEPAY_API_KEY) {
+    throw new Error("ABACATEPAY_API_KEY is not defined. Please define it to enable the payment gateway");
+}
+
+const ABACATEPAY_WEBHOOK_SECRET = process.env.ABACATEPAY_WEBHOOK_SECRET;
+
+if (ABACATEPAY_ENABLED && !ABACATEPAY_WEBHOOK_SECRET) {
+    throw new Error("ABACATEPAY_WEBHOOK_SECRET is not defined. Without it webhook payloads cannot be authenticated");
+}
+
+const ABACATEPAY_BASE_URL = (process.env.ABACATEPAY_BASE_URL ?? "https://api.abacatepay.com/v2").trim().replace(/\/+$/, "");
+
+if (ABACATEPAY_ENABLED && !ABACATEPAY_BASE_URL.startsWith("https://")) {
+    throw new Error("ABACATEPAY_BASE_URL must use https");
+}
+
+const ABACATEPAY_TIMEOUT = process.env.ABACATEPAY_TIMEOUT ?? "15000";
+
+// Em devMode a AbacatePay nao move dinheiro de verdade e habilita
+// /transparents/simulate-payment.
+const ABACATEPAY_DEV_MODE = (process.env.ABACATEPAY_DEV_MODE ?? "true").trim().toLowerCase() === "true";
+
+// Para onde o checkout hospedado devolve o usuario. Um deep link do app
+// (ex.: unipass://checkout/return) faz o navegador fechar e a tela retomar.
+const ABACATEPAY_RETURN_URL = process.env.ABACATEPAY_RETURN_URL;
+const ABACATEPAY_COMPLETION_URL = process.env.ABACATEPAY_COMPLETION_URL;
+
+// Janela de validade do Pix, em minutos.
+const ABACATEPAY_PIX_EXPIRES_IN_MINUTES = process.env.ABACATEPAY_PIX_EXPIRES_IN_MINUTES ?? "30";
+
 export const envConfig = {
     server: {
         serverPort: SERVER_PORT,
@@ -159,6 +197,17 @@ export const envConfig = {
             expiresIn: REFRESH_JWT_EXPIRES_IN
         } as SignOptions,
         hashSaltRounds: Number(HASH_SALT_ROUNDS)
+    },
+    abacatePay: {
+        enabled: ABACATEPAY_ENABLED,
+        apiKey: ABACATEPAY_API_KEY,
+        webhookSecret: ABACATEPAY_WEBHOOK_SECRET,
+        baseUrl: ABACATEPAY_BASE_URL,
+        timeout: Number(ABACATEPAY_TIMEOUT),
+        devMode: ABACATEPAY_DEV_MODE,
+        returnUrl: ABACATEPAY_RETURN_URL,
+        completionUrl: ABACATEPAY_COMPLETION_URL,
+        pixExpiresInMinutes: Number(ABACATEPAY_PIX_EXPIRES_IN_MINUTES),
     },
     admin: {
         defaultAdminUsername: DEFAULT_ADMIN_USERNAME,

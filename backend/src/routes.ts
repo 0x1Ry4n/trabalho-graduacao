@@ -12,6 +12,7 @@ import routeRoutes from "./modules/routes/route.route";
 import routeStopRoutes from "./modules/route_stops/route-stop.route";
 import studentRouteRoutes from "./modules/student_routes/student-route.route";
 import auditRoutes from "./modules/audit/audit.route";
+import paymentRoutes from "./modules/payments/payment.route";
 import uploadRoutes from './shared/routes/upload.route';
 
 const routes = Router();
@@ -22,6 +23,7 @@ routes.use(collegeRoutes);
 routes.use(studentRoutes);
 routes.use(driverRoutes);
 routes.use(enrollmentRoutes);
+routes.use(paymentRoutes);
 routes.use(accountReceivableRoutes);
 routes.use(vehicleRoutes);
 routes.use(stopRoutes);

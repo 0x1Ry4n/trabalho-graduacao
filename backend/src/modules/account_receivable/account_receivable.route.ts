@@ -9,9 +9,6 @@ import AccountReceivableController from "./account_receivable.controller";
 const accountReceivableRoutes = Router();
 const accountReceivableController = Container.get(AccountReceivableController);
 
-// ─── Price Tables ─────────────────────────
-// Deve vir ANTES de /:id para não ser capturado como parâmetro
-
 accountReceivableRoutes.post(
    '/accountReceivables/priceTables',
    AuthMiddleware,
@@ -63,8 +60,6 @@ accountReceivableRoutes.patch(
    accountReceivableController.inactivatePriceTable.bind(accountReceivableController)
 );
 
-// ─── Accounts Receivable ─────────────────────────
-
 accountReceivableRoutes.post(
    '/accountReceivables',
    AuthMiddleware,
@@ -87,10 +82,13 @@ accountReceivableRoutes.get(
    accountReceivableController.listWithFiltersPaginated.bind(accountReceivableController)
 );
 
+// O aluno entra aqui pelo checkout, que precisa ler valor e vencimento da
+// conta antes de abrir a cobranca. A restricao ao proprio recebivel esta no
+// service, porque depende de resolver pagador -> aluno -> usuario.
 accountReceivableRoutes.get(
    '/accountReceivables/:id',
    AuthMiddleware,
-   AuthorizeRolesMiddleware(UserRole.ADMIN, UserRole.DRIVER),
+   AuthorizeRolesMiddleware(UserRole.ADMIN, UserRole.DRIVER, UserRole.STUDENT),
    accountReceivableController.findById.bind(accountReceivableController)
 );
 
@@ -111,7 +109,7 @@ accountReceivableRoutes.get(
 accountReceivableRoutes.patch(
    '/accountReceivables/:id',
    AuthMiddleware,
-   AuthorizeRolesMiddleware(UserRole.ADMIN, UserRole.DRIVER, UserRole.STUDENT),
+   AuthorizeRolesMiddleware(UserRole.ADMIN, UserRole.DRIVER),
    accountReceivableController.update.bind(accountReceivableController)
 );
 

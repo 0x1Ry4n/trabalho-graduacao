@@ -1,8 +1,9 @@
 import { sql } from "drizzle-orm";
-import { integer, pgTable, pgEnum, varchar, timestamp, date, numeric, uuid, check, unique, time, char, jsonb } from "drizzle-orm/pg-core";
+import { integer, pgTable, pgEnum, varchar, timestamp, date, numeric, uuid, check, unique, time, char, jsonb, index } from "drizzle-orm/pg-core";
 import {
   VehicleCategory, CardValidationStatus, TripExpenseCategory, TripExpenseStatus,
-  RoutePeriod, AccountStatus, PaymentProofType, PaymentType, PayerType, EnrollmentStatus, DriverContractType, UserRole, AuditAction
+  RoutePeriod, AccountStatus, PaymentProofType, PaymentType, PayerType, EnrollmentStatus, DriverContractType, UserRole, AuditAction,
+  ChargeMethod, ChargeStatus, PaymentProvider
 } from "../../shared/enums/index.enum";
 import { AccountReceivableType } from "../../shared/enums/account-receivable-type.enum";
 
@@ -20,6 +21,9 @@ export const routePeriodEnum = pgEnum("route_period", RoutePeriod);
 export const tripExpenseStatusEnum = pgEnum("trip_expense_status", TripExpenseStatus);
 export const tripExpenseTypeEnum = pgEnum("trip_expense_type", TripExpenseCategory);
 export const auditActionEnum = pgEnum("audit_action", AuditAction);
+export const chargeMethodEnum = pgEnum("charge_method", ChargeMethod);
+export const chargeStatusEnum = pgEnum("charge_status", ChargeStatus);
+export const paymentProviderEnum = pgEnum("payment_provider", PaymentProvider);
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -186,6 +190,65 @@ export const accountsReceivableTable = pgTable("accounts_receivable", {
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow()
 }, (table) => [check("payment_proof_check", sql`${table.paymentProofUrl} IS NULL OR ${table.status} = 'PAID'`)]);
+
+/**
+ * Cobranca criada num gateway de pagamento para quitar uma conta a receber.
+ *
+ * Uma conta pode acumular varias cobrancas ao longo do tempo (um Pix que
+ * expirou, um boleto emitido depois, um cartao recusado). Por isso a relacao e
+ * 1:N e nao uma coluna extra em `accounts_receivable`.
+ *
+ * Nada aqui e dado sensivel de cartao: a AbacatePay nao expoe PAN, e o fluxo de
+ * cartao acontece inteiramente no checkout hospedado dela.
+ */
+export const paymentChargesTable = pgTable("payment_charges", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  accountReceivableId: integer().notNull().references(() => accountsReceivableTable.id),
+  provider: paymentProviderEnum().notNull().default(PaymentProvider.ABACATEPAY),
+  /** Id da cobranca no gateway (`pix_...`, `bill_...`). Nulo so entre o INSERT e a resposta do gateway. */
+  providerChargeId: varchar({ length: 100 }),
+  /**
+   * Chave de idempotencia gerada por nos e enviada ao gateway como `externalId`.
+   * Garante que um retry da requisicao nao gere duas cobrancas para a mesma conta.
+   */
+  externalId: varchar({ length: 100 }).notNull().unique(),
+  method: chargeMethodEnum().notNull(),
+  status: chargeStatusEnum().notNull().default(ChargeStatus.PENDING),
+  /** Valor em centavos, como o gateway trabalha. A conversao a partir de `numeric(10,2)` acontece no service. */
+  amountCents: integer().notNull(),
+  /** Pix copia-e-cola. O QR e desenhado no app a partir daqui; nao guardamos o PNG. */
+  brCode: varchar({ length: 1000 }),
+  /** Linha digitavel do boleto. */
+  barCode: varchar({ length: 100 }),
+  /** URL do boleto para impressao, ou do checkout hospedado no caso de cartao. */
+  paymentUrl: varchar({ length: 500 }),
+  expiresAt: timestamp(),
+  paidAt: timestamp(),
+  /** Ultima vez que reconciliamos com o gateway, para nao consultar em excesso. */
+  lastCheckedAt: timestamp(),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow()
+}, (table) => [
+  index("payment_charges_account_idx").on(table.accountReceivableId),
+  index("payment_charges_provider_charge_idx").on(table.providerChargeId),
+]);
+
+/**
+ * Eventos de webhook ja processados.
+ *
+ * O gateway reenvia eventos ate receber 2xx, entao a mesma notificacao de
+ * pagamento chega mais de uma vez. A unicidade de `eventKey` transforma o
+ * reprocessamento num no-op em vez de uma segunda baixa na conta.
+ */
+export const webhookEventsTable = pgTable("webhook_events", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  provider: paymentProviderEnum().notNull().default(PaymentProvider.ABACATEPAY),
+  /** Identificador estavel do evento: id do proprio evento, ou `<tipo>:<id da cobranca>`. */
+  eventKey: varchar({ length: 200 }).notNull().unique(),
+  eventType: varchar({ length: 100 }).notNull(),
+  payload: jsonb().notNull(),
+  processedAt: timestamp().notNull().defaultNow()
+});
 
 export const vehiclesTable = pgTable("vehicles", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),

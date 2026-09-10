@@ -2,8 +2,7 @@ import React from 'react';
 import { Box, HStack, Text, Pressable, Icon } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation, DrawerActions } from '@react-navigation/native';
-import { router } from 'expo-router';
+import { useNavigation, router } from 'expo-router';
 
 interface ScreenHeaderProps {
   title: string;
@@ -25,29 +24,56 @@ export function ScreenHeader({
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
 
+  const handleOpenMenu = () => {
+    navigation.openDrawer();
+  };
+
   return (
-    <Box bg={bg} pt={`${insets.top + 8}px`} pb="4" px="4">
-      <HStack alignItems="center" space={3}>
+    <Box
+      bg={bg}
+      pt={`${insets.top + 8}px`}
+      pb="4"
+      px="4"
+    > <HStack alignItems="center" space={3}>
         {showBack ? (
-          <Pressable onPress={() => router.back()} p="1" borderRadius="lg">
-            <Icon as={Ionicons} name="arrow-back" size="6" color="white" />
-          </Pressable>
-        ) : showMenu ? (
           <Pressable
-            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+            onPress={() => router.back()}
             p="1"
             borderRadius="lg"
-          >
-            <Icon as={Ionicons} name="menu" size="6" color="white" />
-          </Pressable>
+          > <Icon
+              as={Ionicons}
+              name="arrow-back"
+              size="6"
+              color="white"
+            /> </Pressable>
+        ) : showMenu ? (<Pressable
+          onPress={handleOpenMenu}
+          p="1"
+          borderRadius="lg"
+        > <Icon
+            as={Ionicons}
+            name="menu"
+            size="6"
+            color="white"
+          /> </Pressable>
         ) : null}
 
+        ```
         <Box flex={1}>
-          <Text color="white" fontSize="lg" fontWeight="800" numberOfLines={1}>
+          <Text
+            color="white"
+            fontSize="lg"
+            fontWeight="800"
+            numberOfLines={1}
+          >
             {title}
           </Text>
+
           {subtitle && (
-            <Text color="rgba(255,255,255,0.7)" fontSize="xs">
+            <Text
+              color="rgba(255,255,255,0.7)"
+              fontSize="xs"
+            >
               {subtitle}
             </Text>
           )}

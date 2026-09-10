@@ -27,5 +27,14 @@ declare namespace NodeJS {
         REDIS_CONNECT_TIMEOUT: string;
         REDIS_MAX_RETRIES_PER_REQUEST: string;
         HASH_SALT_ROUNDS: string;
+        ABACATEPAY_ENABLED: string;
+        ABACATEPAY_API_KEY: string;
+        ABACATEPAY_WEBHOOK_SECRET: string;
+        ABACATEPAY_BASE_URL: string;
+        ABACATEPAY_TIMEOUT: string;
+        ABACATEPAY_DEV_MODE: string;
+        ABACATEPAY_RETURN_URL: string;
+        ABACATEPAY_COMPLETION_URL: string;
+        ABACATEPAY_PIX_EXPIRES_IN_MINUTES: string;
     }
 }

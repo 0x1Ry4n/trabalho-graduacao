@@ -42,6 +42,11 @@ export default function StudentLayout() {
       <Drawer.Screen name="calendar" options={{ title: 'Calendario' }} />
       <Drawer.Screen name="payments" options={{ title: 'Pagamentos' }} />
       <Drawer.Screen name="profile" options={{ title: 'Perfil' }} />
+      {/* Alcancada a partir da lista de pagamentos, nunca pelo menu lateral. */}
+      <Drawer.Screen
+        name="checkout"
+        options={{ title: 'Pagamento', drawerItemStyle: { display: 'none' } }}
+      />
     </Drawer>
   );
 }
